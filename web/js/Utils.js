@@ -17,6 +17,10 @@ Math.degToRad = function(degrees){
 	return degrees * this.radRelation;
 };
 
+Math.PI_2 = Math.PI / 2;
+Math.PI2 = Math.PI * 2;
+Math.PI3_2 = Math.PI * 3 / 2;
+
 window.requestAnimFrame = 
 	window.requestAnimationFrame       || 
 	window.webkitRequestAnimationFrame || 

@@ -1,8 +1,15 @@
-varying highp vec2 vTextureCoord;
-
 uniform sampler2D uSampler;
+
+varying highp vec2 vTextureCoord;
+varying highp float vVertexIsDark;
+varying highp float vVertexDepth;
 
 void main(void){
 	highp vec4 color = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+	
+	if (vVertexIsDark == 1.0){ color.rgb *= 0.5; }
+	
+	color.rgb *= vVertexDepth;
+	
 	gl_FragColor = color;
 }

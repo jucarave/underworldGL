@@ -2,7 +2,6 @@ function WebGL(size, container){
 	if (!this.initCanvas(size, container)) return null; 
 	this.initProperties();
 	this.processShaders();
-	this.aspectRatio = size.a / size.b;
 	
 	this.images = [];
 }
@@ -30,8 +29,9 @@ WebGL.prototype.initProperties = function(){
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
-	this.AspectRatio = this.canvas.width / this.canvas.height;
 	
+	this.aspectRatio = this.canvas.width / this.canvas.height;
+	this.perspectiveMatrix = Matrix.makePerspective(45, this.aspectRatio, 0.002, 200.0);
 };
 
 WebGL.prototype.processShaders = function(){
@@ -67,10 +67,12 @@ WebGL.prototype.processShaders = function(){
 	// Get attribute locations
 	this.aVertexPosition = gl.getAttribLocation(this.shaderProgram, "aVertexPosition");
 	this.aTextureCoord = gl.getAttribLocation(this.shaderProgram, "aTextureCoord");
+	this.aVertexIsDark = gl.getAttribLocation(this.shaderProgram, "aVertexIsDark");
 	
 	// Enable attributes
 	gl.enableVertexAttribArray(this.aVertexPosition);
 	gl.enableVertexAttribArray(this.aTextureCoord);
+	gl.enableVertexAttribArray(this.aVertexIsDark);
 	
 	// Get the uniform locations
 	this.uSampler = gl.getUniformLocation(this.shaderProgram, "uSampler");
@@ -92,13 +94,15 @@ WebGL.prototype.getShaderCode = function(shader){
 	return code;
 };
 
-WebGL.prototype.loadImage = function(src, makeItTexture){
+WebGL.prototype.loadImage = function(src, makeItTexture, textureIndex, isSolid){
 	var gl = this;
 	var img = new Image();
 	
 	img.src = src;
 	img.ready = false;
 	img.texture = null;
+	img.textureIndex = textureIndex;
+	img.isSolid = (isSolid === true);
 	
 	addEvent(img, "load", function(){
 		img.ready = true;
@@ -139,11 +143,17 @@ WebGL.prototype.drawObject = function(object, camera, texture){
 
 	// Pass the vertices data to the shader
 	gl.bindBuffer(gl.ARRAY_BUFFER, object.vertexBuffer);
-	gl.vertexAttribPointer(this.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(this.aVertexPosition, object.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 	
 	// Pass the texture data to the shader
 	gl.bindBuffer(gl.ARRAY_BUFFER, object.texBuffer);
-	gl.vertexAttribPointer(this.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(this.aTextureCoord, object.texBuffer.itemSize, gl.FLOAT, false, 0, 0);
+	
+	// Pass the dark buffer data to the shader
+	if (object.darkBuffer){
+		gl.bindBuffer(gl.ARRAY_BUFFER, object.darkBuffer);
+		gl.vertexAttribPointer(this.aVertexIsDark, object.darkBuffer.itemSize, gl.UNSIGNED_BYTE, false, 0, 0);
+	}
 	
 	// Set the texture to work with
 	gl.activeTexture(gl.TEXTURE0);
@@ -151,18 +161,17 @@ WebGL.prototype.drawObject = function(object, camera, texture){
 	gl.uniform1i(this.uSampler, 0);
 	
 	// Create the perspective and transform the object
-	var perspectiveMatrix = Matrix.makePerspective(45, this.aspectRatio, 1.0, 200.0);
 	var transformationMatrix = Matrix.makeTransform(object, camera);
 	
 	// Pass the indices data to the shader
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.indicesBuffer);
 	
 	// Set the perspective and transformation matrices
-	gl.uniformMatrix4fv(this.uPerspectiveMatrix, false, new Float32Array(perspectiveMatrix));
+	gl.uniformMatrix4fv(this.uPerspectiveMatrix, false, new Float32Array(this.perspectiveMatrix));
 	gl.uniformMatrix4fv(this.uTransformationMatrix, false, new Float32Array(transformationMatrix));
 	
 	// Draw the triangles
-	gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+	gl.drawElements(gl.TRIANGLES, object.indicesBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 };
 
 WebGL.prototype.areImagesReady = function(){

@@ -1,69 +1,93 @@
 function Underworld(){
 	this.GL = new WebGL(vec2(640, 400), $$("divGame"));
+	this.UI = new UI(vec2(640, 400), $$("divGame"));
 	
-	this.camera = {position: vec3(0.0,0.0,0.0), rotation: vec3(0.0,0.0,0.0)};
+	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	
-	this.cube = ObjectFactory.cube(vec3(2.0,2.0,2.0), vec2(1.0,1.0), this.GL.ctx);
-	this.cube.position.c = -6;
-	
+	this.map = null;
 	this.keys = [];
 	this.images = {};
+	this.textures = [];
+	
+	this.fps = (1000 / 30) << 0;
+	this.lastT = 0;
+	this.numberFrames = 0;
+	this.firstFrame = Date.now();
 	
 	this.loadImages();
 }
 
 Underworld.prototype.loadImages = function(){
-	this.images.texWall1 = this.GL.loadImage("img/texWall1.png", true);
+	this.textures = [null];
+	this.textures.push(this.GL.loadImage("img/texWall1.png", true, 1, true));
+	this.textures.push(this.GL.loadImage("img/texWall2.png", true, 2, true));
+	this.textures.push(this.GL.loadImage("img/texWall3.png", true, 3, true));
+	this.textures.push(this.GL.loadImage("img/texFloor1.png", true, 4));
+	this.textures.push(this.GL.loadImage("img/texWater1_0.png", true, 5));
+	this.textures.push(this.GL.loadImage("img/texWater1_1.png", true, 6));
+	this.textures.push(this.GL.loadImage("img/texCeil1.png", true, 7));
+};
+
+Underworld.prototype.getTextureById = function(textureId){
+	if (!this.textures[textureId]) throw "Invalid textureId: " + textureId;
+	
+	return this.textures[textureId];
 };
 
 Underworld.prototype.loadGame = function(){
 	var game = this;
 	
 	if (game.GL.areImagesReady()){
+		game.map = new MapManager(this, "test");
 		game.loop();
 	}else{
 		requestAnimFrame(function(){ game.loadGame(); });
 	}
 };
 
-Underworld.prototype.tempCameraControl = function(){
-	if (this.keys[81] == 1){ this.camera.rotation.b += 2; }else
-	if (this.keys[69] == 1){ this.camera.rotation.b -= 2; }
+Underworld.prototype.drawBlock = function(x, y, z, texId){
+	var game = this;
+	var camera = game.map.player;
 	
-	if (this.keys[49] == 1){ this.camera.rotation.a += 1; }else
-	if (this.keys[50] == 1){ this.camera.rotation.a = 0; }else
-	if (this.keys[51] == 1){ this.camera.rotation.a -= 1; }
+	game.cube.position.set(x, y, z);
+	game.GL.drawObject(game.cube, camera, game.getTextureById(texId).texture);
+};
+
+Underworld.prototype.drawFloor = function(x, y, z, texId){
+	var game = this;
+	var camera = game.map.player;
 	
-	if (this.keys[87] == 1){
-		this.camera.position.a += Math.cos(Math.degToRad(this.camera.rotation.b + 90)) * 0.2;
-		this.camera.position.c -= Math.sin(Math.degToRad(this.camera.rotation.b + 90)) * 0.2;
-	}else if (this.keys[83] == 1){
-		this.camera.position.a += Math.cos(Math.degToRad(this.camera.rotation.b - 90)) * 0.2;
-		this.camera.position.c -= Math.sin(Math.degToRad(this.camera.rotation.b - 90)) * 0.2;
-	}
-	
-	if (this.keys[65] == 1){
-		this.camera.position.a += Math.cos(Math.degToRad(this.camera.rotation.b + 180)) * 0.2;
-		this.camera.position.c -= Math.sin(Math.degToRad(this.camera.rotation.b + 180)) * 0.2;
-	}else if (this.keys[68] == 1){
-		this.camera.position.a += Math.cos(Math.degToRad(this.camera.rotation.b)) * 0.2;
-		this.camera.position.c -= Math.sin(Math.degToRad(this.camera.rotation.b)) * 0.2;
-	}
+	game.floor.position.set(x, y, z);
+	game.GL.drawObject(game.floor, camera, game.getTextureById(texId).texture);
+};
+
+Underworld.prototype.drawFPS = function(/*float*/ now){
+	var fps = Math.floor((++this.numberFrames) / ((now - this.firstFrame) / 1000));
+	var ctx = this.UI.ctx;
+	ctx.font = '16px "Courier"';
+	ctx.fillStyle = "white";
+	ctx.fillText("FPS: " + fps + "/30", 16, 16);
 };
 
 Underworld.prototype.loop = function(){
 	var game = this;
-	var gl = game.GL.ctx;
 	
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	var now = Date.now();
+	var dT = (now - game.lastT);
 	
-	/*game.cube.rotation.a += 1;
-	game.cube.rotation.b += 1;
-	game.cube.rotation.c += 1;*/
-	
-	game.tempCameraControl();
-	
-	game.GL.drawObject(game.cube, game.camera, game.images.texWall1.texture);
+	// Limit the game to the base speed of the game
+	if (dT > game.fps){
+		game.lastT = now - (dT % game.fps);
+		
+		var gl = game.GL.ctx;
+		
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		game.UI.clear();
+		
+		game.map.loop();
+		game.drawFPS(now);
+	}
 	
 	requestAnimFrame(function(){ game.loop(); });
 };
@@ -83,5 +107,10 @@ addEvent(window, "load", function(){
 		if (window.event) e = window.event;
 		
 		game.keys[e.keyCode] = 0;
+	});
+	
+	addEvent(window, "focus", function(){
+		game.firstFrame = Date.now();
+		game.numberFrames = 0;
 	});
 });

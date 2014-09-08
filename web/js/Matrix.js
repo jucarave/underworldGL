@@ -30,18 +30,18 @@ var Matrix = {
 		// Rotate the object
 		// Until I find the need to rotate an object itself it reamins as comment
 		//tMat = this.matrixMultiplication(tMat, this.getRotationX(object.rotation.a));
-		//tMat = this.matrixMultiplication(tMat, this.getRotationY(object.rotation.b));
+		tMat = this.matrixMultiplication(tMat, this.getRotationY(object.rotation.b));
 		//tMat = this.matrixMultiplication(tMat, this.getRotationZ(object.rotation.c));
 		
 		// Move the object to its position
 		tMat = this.matrixMultiplication(tMat, this.getTranslation(object.position.a, object.position.b, object.position.c));
 		
 		// Move the object in relation to the camera
-		tMat = this.matrixMultiplication(tMat, this.getTranslation(-camera.position.a, -camera.position.b, -camera.position.c));
+		tMat = this.matrixMultiplication(tMat, this.getTranslation(-camera.position.a + 0.5, -camera.position.b - camera.cameraHeight + 0.5, -camera.position.c + 0.5));
 		
 		// Rotate the object in the camera direction (I don't really rotate in the Z axis)
+		tMat = this.matrixMultiplication(tMat, this.getRotationY(camera.rotation.b - Math.PI_2));
 		tMat = this.matrixMultiplication(tMat, this.getRotationX(-camera.rotation.a));
-		tMat = this.matrixMultiplication(tMat, this.getRotationY(camera.rotation.b));
 		//tMat = this.matrixMultiplication(tMat, this.getRotationZ(-camera.rotation.c));
 		
 		return tMat;
@@ -57,7 +57,6 @@ var Matrix = {
 	},
 	
 	getRotationX: function(ang){
-		ang = Math.degToRad(ang);
 		var C = Math.cos(ang);
 		var S = Math.sin(ang);
 		
@@ -70,7 +69,6 @@ var Matrix = {
 	},
 	
 	getRotationY: function(ang){
-		ang = Math.degToRad(ang);
 		var C = Math.cos(ang);
 		var S = Math.sin(ang);
 		
@@ -83,7 +81,6 @@ var Matrix = {
 	},
 	
 	getRotationZ: function(ang){
-		ang = Math.degToRad(ang);
 		var C = Math.cos(ang);
 		var S = Math.sin(ang);
 		

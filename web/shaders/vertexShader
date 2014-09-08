@@ -1,12 +1,20 @@
 attribute highp vec3 aVertexPosition;
 attribute highp vec2 aTextureCoord;
+attribute highp float aVertexIsDark;
 
 uniform highp mat4 uTransformationMatrix;
 uniform highp mat4 uPerspectiveMatrix;
 
 varying highp vec2 vTextureCoord;
+varying highp float vVertexIsDark;
+varying highp float vVertexDepth;
 
 void main(void){
 	gl_Position = uPerspectiveMatrix * uTransformationMatrix * vec4(aVertexPosition, 1.0);
 	vTextureCoord = aTextureCoord;
+	vVertexIsDark = aVertexIsDark;
+	
+	vVertexDepth = cos(gl_Position.z / 3.0);
+	if (vVertexDepth < 0.0) vVertexDepth = 0.0;
+	else if (vVertexDepth > 1.0) vVertexDepth = 1.0;
 }

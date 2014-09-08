@@ -16,6 +16,16 @@ Vec4.prototype.equals = function(a, b, c, d){
 	}
 };
 
+Vec4.prototype.set = function(a, b, c, d){
+	if (c == undefined) c = 0;
+	if (d == undefined) d = 0;
+	
+	this.a = a;
+	this.b = b;
+	this.c = c;
+	this.d = d;
+};
+
 function vec2(a, b){
 	return new Vec4(a,b,0,0);
 }
