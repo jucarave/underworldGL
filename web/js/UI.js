@@ -8,8 +8,8 @@ UI.prototype.initCanvas = function(size, container){
 	canvas.height = size.b;
 	
 	canvas.style.position = "absolute";
-	canvas.style.left = 0;
 	canvas.style.top = 0;
+	canvas.style.height = "100%";
 	
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");

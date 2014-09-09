@@ -16,9 +16,27 @@
 		
 		<script id="vertexShader" type="x-shader/x-vertex"><?php require("shaders/vertexShader"); ?></script>
 		<script id="fragmentShader" type="x-shader/x-fragment"><?php require("shaders/fragmentShader"); ?></script>
+		
+		<style>
+			body{ background-color: black; }
+			#divGame {
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				position: absolute;
+			}
+			
+			canvas{ 
+				left: 0px;
+				right: 0px;
+				margin: auto; 
+			}
+		</style>
 	</head>
 	
 	<body>
-		<div id="divGame" style="position:relative"></div>
+		<div id="divGame" ></div>
 	</body>
 </html>

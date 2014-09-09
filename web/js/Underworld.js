@@ -1,6 +1,9 @@
 function Underworld(){
-	this.GL = new WebGL(vec2(640, 400), $$("divGame"));
-	this.UI = new UI(vec2(640, 400), $$("divGame"));
+	this.size = vec2(320, 200);
+	this.glpos = vec2(75, 36);
+	
+	this.GL = new WebGL(this.size, this.glpos, $$("divGame"));
+	this.UI = new UI(this.size, $$("divGame"));
 	
 	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
@@ -16,9 +19,14 @@ function Underworld(){
 	this.firstFrame = Date.now();
 	
 	this.loadImages();
+	this.loadTextures();
 }
 
 Underworld.prototype.loadImages = function(){
+	this.images.viewport = this.GL.loadImage("img/buUI.png", false);
+};
+
+Underworld.prototype.loadTextures = function(){
 	this.textures = [null];
 	this.textures.push(this.GL.loadImage("img/texWall1.png", true, 1, true));
 	this.textures.push(this.GL.loadImage("img/texWall2.png", true, 2, true));
@@ -65,7 +73,7 @@ Underworld.prototype.drawFloor = function(x, y, z, texId){
 Underworld.prototype.drawFPS = function(/*float*/ now){
 	var fps = Math.floor((++this.numberFrames) / ((now - this.firstFrame) / 1000));
 	var ctx = this.UI.ctx;
-	ctx.font = '16px "Courier"';
+	ctx.font = '10px "Courier"';
 	ctx.fillStyle = "white";
 	ctx.fillText("FPS: " + fps + "/30", 16, 16);
 };
@@ -86,6 +94,8 @@ Underworld.prototype.loop = function(){
 		game.UI.clear();
 		
 		game.map.loop();
+		
+		game.UI.ctx.drawImage(game.images.viewport,0,0);
 		game.drawFPS(now);
 	}
 	
@@ -112,5 +122,12 @@ addEvent(window, "load", function(){
 	addEvent(window, "focus", function(){
 		game.firstFrame = Date.now();
 		game.numberFrames = 0;
+	});
+	
+	addEvent(window, "resize", function(){
+		var scale = $$("divGame").offsetHeight / game.size.b;
+		var canvas = game.GL.canvas;
+		canvas.style.top = (game.glpos.b * scale) + "px";
+		canvas.style.left = (-game.glpos.a * scale) + "px";
 	});
 });

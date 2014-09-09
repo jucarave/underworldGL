@@ -1,17 +1,23 @@
-function WebGL(size, container){
-	if (!this.initCanvas(size, container)) return null; 
+function WebGL(size, position, container){
+	if (!this.initCanvas(size, position, container)) return null; 
 	this.initProperties();
 	this.processShaders();
 	
 	this.images = [];
 }
 
-WebGL.prototype.initCanvas = function(size, container){
+WebGL.prototype.initCanvas = function(size, position, container){
+	var scale = $$("divGame").offsetHeight / size.b;
+	
 	var canvas = document.createElement("canvas");
 	canvas.width = size.a;
 	canvas.height = size.b;
+	canvas.style.position = "absolute";
+	canvas.style.top = (position.b * scale) + "px";
+	canvas.style.left = (-position.a * scale) + "px";
+	canvas.style.height = "64%";
 	
-	if (!canvas.getContext("webgl") && !canvas.getContext("experimental-webgl")){
+	if (!canvas.getContext("experimental-webgl")){
 		alert("Your browser doesn't support WebGL");
 		return false;
 	}
