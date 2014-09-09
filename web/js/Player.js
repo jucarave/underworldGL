@@ -30,11 +30,11 @@ Player.prototype.moveTo = function(xTo, zTo){
 		if (this.jog.a <= -0.03 && this.jog.b == -1) this.jog.b = 1;
 	}
 	
-	if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c)){
+	if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c, this.cameraHeight)){
 		this.position.a += xTo;
 	}
 	
-	if (!this.mapManager.isSolid(this.position.a, this.position.b, this.position.c + B)){
+	if (!this.mapManager.isSolid(this.position.a, this.position.b, this.position.c + B, this.cameraHeight)){
 		this.position.c += zTo;
 	}
 };
