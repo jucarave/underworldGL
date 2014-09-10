@@ -79,7 +79,7 @@ MapManager.prototype.isWaterPosition = function(x, z){
 	return this.isWaterTile(t.f);
 };
 
-MapManager.prototype.isSolid = function(x, y, z, h){
+MapManager.prototype.isSolid = function(x, y, z, h, inWater){
 	x = (x << 0);
 	z = (z << 0);
 	
@@ -88,8 +88,11 @@ MapManager.prototype.isSolid = function(x, y, z, h){
 	if (this.map[z][x] === 0) return false;
 	var t = this.map[z][x];
 	
+	var th = t.h - 0.3;
+	if (inWater) y += 0.3;
+	
 	if (!t.w) return false;
-	if (t.y+t.h <= y) return false;
+	if (t.y+th <= y) return false;
 	else if (t.y > y + h) return false;
 	
 	var tex = this.game.getTextureById(t.w);
@@ -107,6 +110,7 @@ MapManager.prototype.getYFloor = function(x, y){
 	var tt = t.y;
 	
 	if (t.w) tt += t.h;
+	if (this.isWaterTile(t.f)) tt -= 0.3;
 	
 	return tt;
 };

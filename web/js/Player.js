@@ -7,7 +7,10 @@ function Player(position, direction, mapManager){
 	this.movementSpd = 0.1;
 	this.cameraHeight = 0.5;
 	this.maxVertRotation = Math.degToRad(45);
+	
 	this.targetY = 0.0;
+	this.ySpeed = 0.0;
+	this.yGravity = 0.0;
 	
 	this.jog = vec2(0.0, 1);
 	this.onWater = false;
@@ -30,11 +33,11 @@ Player.prototype.moveTo = function(xTo, zTo){
 		if (this.jog.a <= -0.03 && this.jog.b == -1) this.jog.b = 1;
 	}
 	
-	if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c, this.cameraHeight)){
+	if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c, this.cameraHeight, this.onWater)){
 		this.position.a += xTo;
 	}
 	
-	if (!this.mapManager.isSolid(this.position.a, this.position.b, this.position.c + B, this.cameraHeight)){
+	if (!this.mapManager.isSolid(this.position.a, this.position.b, this.position.c + B, this.cameraHeight, this.onWater)){
 		this.position.c += zTo;
 	}
 };
@@ -49,7 +52,7 @@ Player.prototype.movement = function(){
 	if (game.keys[50] == 1){ this.rotation.a = 0; }else
 	if (game.keys[51] == 1){ this.rotation.a -= this.rotationSpd.a; }
 	
-	var A = 0, B = 0;
+	var A = 0.0, B = 0.0;
 	if (game.keys[87] == 1){
 		A = Math.cos(this.rotation.b) * this.movementSpd;
 		B = -Math.sin(this.rotation.b) * this.movementSpd;
@@ -74,16 +77,14 @@ Player.prototype.movement = function(){
 Player.prototype.doVerticalChecks = function(){
 	this.targetY = this.mapManager.getYFloor(this.position.a, this.position.c);
 	if (this.mapManager.isWaterPosition(this.position.a, this.position.c) && this.position.b == this.targetY){
-		this.cameraHeight = 0.2;
 		this.movementSpd = 0.05;
 		this.onWater = true;
 	}else{
-		this.cameraHeight = 0.5;
 		this.movementSpd = 0.1;
 		this.onWater = false;
 	}
 	
-	this.cameraHeight += this.jog.a;
+	this.cameraHeight = 0.5 + this.jog.a;
 };
 
 Player.prototype.step = function(){
@@ -91,10 +92,10 @@ Player.prototype.step = function(){
 	this.doVerticalChecks();
 	
 	if (this.targetY < this.position.b){
-		this.position.b -= 0.05;
+		this.position.b -= 0.08;
 		if (this.position.b <= this.targetY) this.position.b = this.targetY;
 	}else if (this.targetY > this.position.b){
-		this.position.b += 1;
+		this.position.b += 0.05;
 		if (this.position.b >= this.targetY) this.position.b = this.targetY;
 	}
 };
