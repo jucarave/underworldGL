@@ -7,6 +7,7 @@ function Underworld(){
 	
 	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	
 	this.map = null;
 	this.keys = [];
@@ -62,12 +63,13 @@ Underworld.prototype.drawBlock = function(x, y, z, texId){
 	game.GL.drawObject(game.cube, camera, game.getTextureById(texId).texture);
 };
 
-Underworld.prototype.drawFloor = function(x, y, z, texId){
+Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
 	var game = this;
 	var camera = game.map.player;
 	
-	game.floor.position.set(x, y, z);
-	game.GL.drawObject(game.floor, camera, game.getTextureById(texId).texture);
+	var floor = (ceil)? game.ceil : game.floor;
+	floor.position.set(x, y, z);
+	game.GL.drawObject(floor, camera, game.getTextureById(texId).texture);
 };
 
 Underworld.prototype.drawFPS = function(/*float*/ now){

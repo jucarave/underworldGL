@@ -145,13 +145,13 @@ MapManager.prototype.drawMap = function(){
 			if (t.f){
 				var tt = t.f;
 				if (this.isWaterTile(tt)) tt = tt + (this.waterFrame << 0);
-				this.game.drawFloor(j, -0.5 + fy, i, tt);
+				this.game.drawFloor(j, -0.5 + fy, i, tt, false);
 			}
 			
 			// Draw ceil
 			if (t.c){
 				var tt = t.c;
-				this.game.drawFloor(j, -0.5 + cy, i, tt);
+				this.game.drawFloor(j, -0.5 + cy, i, tt, true);
 			}
 		}
 	}

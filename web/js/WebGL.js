@@ -34,6 +34,7 @@ WebGL.prototype.initProperties = function(){
 	
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
+	gl.enable(gl.CULL_FACE);
 	gl.depthFunc(gl.LEQUAL);
 	
 	this.aspectRatio = this.canvas.width / this.canvas.height;
