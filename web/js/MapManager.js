@@ -13,23 +13,29 @@ function MapManager(game, map){
 }
 
 MapManager.prototype.createTestMap = function(){
-	var A, B, C, D, E, F, G, H;
+	var A, B, C, D, E, F, G, H, M, N, O, P, Q;
 	// Walls
-	A = {w: 3, y: -1, h: 2};
-	B = {w: 3, y: 0, h: 1};
-	C = {w: 3, y: -1, h: 1, c: 7, f: 4};
-	D = {w: 1, y: 0, h: 1};
-	E = {w: 1, y: -1, h: 1, c: 7, f: 1};
-	F = {w: 1, y: -1, h: 2};
-	G = {w: 2, y: -1, h: 1, c: 2, f: 2};
-	H = {w: 2, y: 0, h: 1};
+	A = {w: 3, y: -1, h: 3};
+	B = {w: 3, y: 0, h: 2};
+	C = {w: 3, y: -1, h: 1, c: 7, f: 4, ch: 2};
+	D = {w: 1, y: 0, h: 2};
+	E = {w: 1, y: -1, h: 1, c: 7, f: 1, ch: 2};
+	F = {w: 1, y: -1, h: 3};
+	G = {w: 2, y: -1, h: 1, c: 2, f: 2, ch: 2};
+	H = {w: 2, y: 0, h: 2};
+	M = {dw: 3, aw: 1, y: 0, h: 2, f: 4, c: 7};
+	
+	N = {dw: 1, aw: 0, y: 0, h: 2, f: 1, c: 7};
+	O = {dw: 1, aw: 1, y: 0, h: 2, f: 1, c: 7};
+	P = {dw: 1, aw: 2, y: 0, h: 2, f: 1, c: 7};
+	Q = {dw: 1, aw: 3, y: 0, h: 2, f: 1, c: 7};
 	
 	var I, J, K, L;
 	// Floors
-	I = {f: 5, c: 7, y: -0.3, h: 1.3};
-	J = {f: 4, c: 7, y: 0, h: 1};
-	K = {f: 1, c: 7, y: 0, h: 1};
-	L = {f: 2, c: 2, y: 0, h: 1};
+	I = {f: 5, c: 7, y: -0.3, h: 2.3};
+	J = {f: 4, c: 7, y: 0, h: 2};
+	K = {f: 1, c: 7, y: 0, h: 2};
+	L = {f: 2, c: 2, y: 0, h: 2};
 	
 	this.map = [
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -43,8 +49,8 @@ MapManager.prototype.createTestMap = function(){
 		[0,0,0,0,0,0,0,B,J,B,0,0,0,0,D,D,K,D,0],
 		[0,0,0,0,0,0,0,B,J,B,0,0,0,D,D,K,K,D,D],
 		[0,0,0,0,0,0,0,B,J,B,B,B,B,D,K,K,K,K,D],
-		[0,0,0,0,0,0,0,B,J,J,J,J,J,J,K,K,K,K,D],
-		[0,0,0,0,0,0,0,B,B,B,B,J,B,D,K,K,K,K,D],
+		[0,0,0,0,0,0,0,B,M,J,J,J,J,J,K,N,O,K,D],
+		[0,0,0,0,0,0,0,B,B,B,B,J,B,D,K,Q,P,K,D],
 		[0,0,0,0,0,0,0,0,0,0,B,J,B,D,K,K,K,K,D],
 		[0,0,0,0,0,0,0,0,0,0,B,J,B,D,D,D,D,D,D],
 		[0,0,0,0,0,0,0,D,D,D,B,J,B,D,D,D,0,0,0],
@@ -80,23 +86,32 @@ MapManager.prototype.isWaterPosition = function(x, z){
 };
 
 MapManager.prototype.isSolid = function(x, y, z, h, inWater){
-	x = (x << 0);
-	z = (z << 0);
+	var xx = (x << 0);
+	var zz = (z << 0);
 	
-	if (!this.map[z]) return false;
-	if (this.map[z][x] === undefined) return false;
-	if (this.map[z][x] === 0) return false;
-	var t = this.map[z][x];
+	if (!this.map[zz]) return false;
+	if (this.map[zz][xx] === undefined) return false;
+	if (this.map[zz][xx] === 0) return false;
+	var t = this.map[zz][xx];
 	
 	var th = t.h - 0.3;
 	if (inWater) y += 0.3;
 	
-	if (!t.w) return false;
+	if (!t.w && !t.dw) return false;
 	if (t.y+th <= y) return false;
 	else if (t.y > y + h) return false;
 	
-	var tex = this.game.getTextureById(t.w);
-	return tex.isSolid;
+	if (t.w){
+		var tex = this.game.getTextureById(t.w);
+		return tex.isSolid;
+	}else if (t.dw){
+		var xxx, zzz;
+		if (t.aw == 0){ xxx = (xx + 1) - x; zzz =  z - zz; }
+		else if (t.aw == 1){ xxx = x - xx; zzz =  z - zz; }
+		else if (t.aw == 2){ xxx = x - xx; zzz =  (zz + 1) - z; }
+		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; }
+		return (zzz >= xxx);
+	}
 };
 
 MapManager.prototype.getYFloor = function(x, y){
@@ -143,6 +158,9 @@ MapManager.prototype.drawMap = function(){
 				
 				fy = fy + t.h;
 				cy = cy + t.h;
+			}else if (t.dw){
+				// Draw angled 
+				for (var wy=fy;wy<cy;wy++) this.game.drawAngledWall(j, wy, i, t.dw, t.aw);
 			}
 			
 			// Draw floor
@@ -154,6 +172,7 @@ MapManager.prototype.drawMap = function(){
 			
 			// Draw ceil
 			if (t.c){
+				if (t.ch) cy = t.ch;
 				var tt = t.c;
 				this.game.drawFloor(j, -0.5 + cy, i, tt, true);
 			}

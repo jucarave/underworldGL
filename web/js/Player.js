@@ -19,6 +19,7 @@ function Player(position, direction, mapManager){
 Player.prototype.moveTo = function(xTo, zTo){
 	var A = xTo * 5;
 	var B = zTo * 5;
+	var moved = false;
 	
 	if (this.onWater){
 		this.jog.a += 0.01 * this.jog.b;
@@ -35,11 +36,16 @@ Player.prototype.moveTo = function(xTo, zTo){
 	
 	if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c, this.cameraHeight, this.onWater)){
 		this.position.a += xTo;
+		moved = true;
 	}
 	
 	if (!this.mapManager.isSolid(this.position.a, this.position.b, this.position.c + B, this.cameraHeight, this.onWater)){
 		this.position.c += zTo;
+		moved = true;
 	}
+	
+	if (moved) this.doVerticalChecks();
+	return moved;
 };
 
 Player.prototype.movement = function(){
@@ -75,7 +81,9 @@ Player.prototype.movement = function(){
 };
 
 Player.prototype.doVerticalChecks = function(){
-	this.targetY = this.mapManager.getYFloor(this.position.a, this.position.c);
+	var pointY = this.mapManager.getYFloor(this.position.a, this.position.c);
+	var wy = (this.onWater)? 0.3 : 0;
+	if (pointY - this.position.b - wy <= 0.3) this.targetY = pointY;
 	if (this.mapManager.isWaterPosition(this.position.a, this.position.c) && this.position.b == this.targetY){
 		this.movementSpd = 0.05;
 		this.onWater = true;
@@ -89,13 +97,12 @@ Player.prototype.doVerticalChecks = function(){
 
 Player.prototype.step = function(){
 	this.movement();
-	this.doVerticalChecks();
 	
 	if (this.targetY < this.position.b){
-		this.position.b -= 0.08;
+		this.position.b -= 0.1;
 		if (this.position.b <= this.targetY) this.position.b = this.targetY;
 	}else if (this.targetY > this.position.b){
-		this.position.b += 0.05;
+		this.position.b += 0.08;
 		if (this.position.b >= this.targetY) this.position.b = this.targetY;
 	}
 };

@@ -6,6 +6,7 @@ function Underworld(){
 	this.UI = new UI(this.size, $$("divGame"));
 	
 	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.aWall = ObjectFactory.angledWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	
@@ -61,6 +62,16 @@ Underworld.prototype.drawBlock = function(x, y, z, texId){
 	
 	game.cube.position.set(x, y, z);
 	game.GL.drawObject(game.cube, camera, game.getTextureById(texId).texture);
+};
+
+Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle){
+	var game = this;
+	var camera = game.map.player;
+	angle = Math.degToRad(90 * angle);
+	
+	game.aWall.position.set(x, y, z);
+	game.aWall.rotation.set(0, angle, 0);
+	game.GL.drawObject(game.aWall, camera, game.getTextureById(texId).texture);
 };
 
 Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
