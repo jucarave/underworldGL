@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="js/Underworld.js"></script>
 		<script type="text/javascript" src="js/MapManager.js"></script>
 		<script type="text/javascript" src="js/Player.js"></script>
+		<script type="text/javascript" src="js/TitleScreen.js"></script>
 		
 		<script id="vertexShader" type="x-shader/x-vertex"><?php require("shaders/vertexShader"); ?></script>
 		<script id="fragmentShader" type="x-shader/x-fragment"><?php require("shaders/fragmentShader"); ?></script>

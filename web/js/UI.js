@@ -13,7 +13,12 @@ UI.prototype.initCanvas = function(size, container){
 	
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
+	this.ctx.width = canvas.width;
+	this.ctx.height = canvas.height;
+	
 	container.appendChild(this.canvas);
+	
+	this.scale = canvas.offsetHeight / size.b;
 };
 
 UI.prototype.clear = function(){
