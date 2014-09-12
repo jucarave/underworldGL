@@ -1,4 +1,11 @@
 var ObjectFactory = {
+	normals: {
+		down:  vec2( 0, 1),
+		right: vec2( 1, 0),
+		up:    vec2( 0,-1),
+		left:  vec2(-1, 0)
+	},
+	
 	angledWall: function(size, texRepeat, gl){
 		var vertex, indices, texCoords, darkVertex;
 		var w = size.a / 2;

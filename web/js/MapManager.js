@@ -38,34 +38,33 @@ MapManager.prototype.createTestMap = function(){
 	L = {f: 2, c: 2, y: 0, h: 2};
 	
 	this.map = [
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,A,A,A,A,A,A,A,0,0,0,0,0,0,0],
-		[0,0,0,0,0,A,I,C,C,C,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,0,A,A,A,J,A,A,A,0,0,0,D,D,D,0],
-		[0,0,0,0,0,0,0,B,J,B,0,0,0,0,D,D,K,D,0],
-		[0,0,0,0,0,0,0,B,J,B,0,0,0,D,D,K,K,D,D],
-		[0,0,0,0,0,0,0,B,J,B,B,B,B,D,K,K,K,K,D],
-		[0,0,0,0,0,0,0,B,M,J,J,J,J,J,K,N,O,K,D],
-		[0,0,0,0,0,0,0,B,B,B,B,J,B,D,K,Q,P,K,D],
-		[0,0,0,0,0,0,0,0,0,0,B,J,B,D,K,K,K,K,D],
-		[0,0,0,0,0,0,0,0,0,0,B,J,B,D,D,D,D,D,D],
-		[0,0,0,0,0,0,0,D,D,D,B,J,B,D,D,D,0,0,0],
-		[0,0,0,0,0,0,0,D,E,E,E,E,E,E,E,D,0,0,0],
-		[0,0,0,F,F,F,F,F,I,I,I,I,I,I,I,F,0,0,0],
-		[0,0,0,F,I,I,I,I,I,I,I,I,I,I,I,F,0,0,0],
-		[0,H,H,F,G,F,F,F,I,I,I,I,I,I,I,F,0,0,0],
-		[0,H,L,L,L,H,H,D,E,E,E,E,E,E,E,D,0,0,0],
-		[0,H,L,L,L,L,H,D,D,D,D,D,D,D,D,D,0,0,0],
-		[0,H,L,L,L,L,H,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,H,H,H,H,H,H,0,0,0,0,0,0,0,0,0,0,0,0]
+		[0,0,0,0,A,A,A,A,A,A,A,0,0,0,0,0,0,0],
+		[0,0,0,0,A,I,C,C,C,I,A,0,0,0,0,0,0,0],
+		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
+		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
+		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
+		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
+		[0,0,0,0,A,A,A,J,A,A,A,0,0,0,D,D,D,0],
+		[0,0,0,0,0,0,B,J,B,0,0,0,0,D,D,K,D,0],
+		[0,0,0,0,0,0,B,J,B,0,0,0,D,D,K,K,D,D],
+		[0,0,0,0,0,0,B,J,B,B,B,B,D,K,K,K,K,D],
+		[0,0,0,0,0,0,B,M,J,J,J,J,J,K,N,O,K,D],
+		[0,0,0,0,0,0,B,B,B,B,J,B,D,K,Q,P,K,D],
+		[0,0,0,0,0,0,0,0,0,B,J,B,D,K,K,K,K,D],
+		[0,0,0,0,0,0,0,0,0,B,J,B,D,D,D,D,D,D],
+		[0,0,0,0,0,0,D,D,D,B,J,B,D,D,D,0,0,0],
+		[0,0,0,0,0,0,D,E,E,E,E,E,E,E,D,0,0,0],
+		[0,0,F,F,F,F,F,I,I,I,I,I,I,I,F,0,0,0],
+		[0,0,F,I,I,I,I,I,I,I,I,I,I,I,F,0,0,0],
+		[H,H,F,G,F,F,F,I,I,I,I,I,I,I,F,0,0,0],
+		[H,L,L,L,H,H,D,E,E,E,E,E,E,E,D,0,0,0],
+		[H,L,L,L,L,H,D,D,D,D,D,D,D,D,D,0,0,0],
+		[H,L,L,L,L,H,0,0,0,0,0,0,0,0,0,0,0,0],
+		[H,H,H,H,H,H,0,0,0,0,0,0,0,0,0,0,0,0]
 	];
 	
 	this.waterTiles = [5];
-	this.player = new Player(vec3(8.5, 0.0, 3.5), vec3(0.0, Math.PI3_2, 0.0), this);
+	this.player = new Player(vec3(7.5, 0.0, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
 };
 
 MapManager.prototype.isWaterTile = function(tileId){
@@ -85,9 +84,9 @@ MapManager.prototype.isWaterPosition = function(x, z){
 	return this.isWaterTile(t.f);
 };
 
-MapManager.prototype.isSolid = function(x, y, z, h, inWater){
-	var xx = (x << 0);
-	var zz = (z << 0);
+MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
+	var xx = ((pos.a + spd.a) << 0);
+	var zz = ((pos.c + spd.b) << 0);
 	
 	if (!this.map[zz]) return false;
 	if (this.map[zz][xx] === undefined) return false;
@@ -95,15 +94,25 @@ MapManager.prototype.isSolid = function(x, y, z, h, inWater){
 	var t = this.map[zz][xx];
 	
 	var th = t.h - 0.3;
-	if (inWater) y += 0.3;
+	if (inWater) pos.b += 0.3;
 	
 	if (!t.w && !t.dw) return false;
-	if (t.y+th <= y) return false;
-	else if (t.y > y + h) return false;
+	if (t.y+th <= pos.b) return false;
+	else if (t.y > pos.b + h) return false;
 	
 	if (t.w){
 		var tex = this.game.getTextureById(t.w);
-		return tex.isSolid;
+		if (tex.isSolid){
+			var xxx = pos.a - xx;
+			var zzz = pos.c - zz;
+			if (zzz >= 0 && zzz < 1){
+				if (xxx <= 0){ return ObjectFactory.normals.left; }else
+				if (xxx >= 1){ return ObjectFactory.normals.right; }
+			}else if (xxx > 0 && xxx < 1){
+				if (zzz <= 0){ return ObjectFactory.normals.up; }else
+				if (zzz >= 1){ return ObjectFactory.normals.down; }
+			}
+		}
 	}else if (t.dw){
 		var xxx, zzz;
 		if (t.aw == 0){ xxx = (xx + 1) - x; zzz =  z - zz; }
@@ -112,6 +121,8 @@ MapManager.prototype.isSolid = function(x, y, z, h, inWater){
 		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; }
 		return (zzz >= xxx);
 	}
+	
+	return null;
 };
 
 MapManager.prototype.getYFloor = function(x, y){

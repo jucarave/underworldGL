@@ -17,8 +17,8 @@ function Player(position, direction, mapManager){
 }
 
 Player.prototype.moveTo = function(xTo, zTo){
-	var A = xTo * 5;
-	var B = zTo * 5;
+	// var A = xTo * 5;
+	// var B = zTo * 5;
 	var moved = false;
 	
 	if (this.onWater){
@@ -34,7 +34,7 @@ Player.prototype.moveTo = function(xTo, zTo){
 		if (this.jog.a <= -0.03 && this.jog.b == -1) this.jog.b = 1;
 	}
 	
-	if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c, this.cameraHeight, this.onWater)){
+	/*if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c, this.cameraHeight, this.onWater)){
 		this.position.a += xTo;
 		moved = true;
 	}
@@ -44,7 +44,22 @@ Player.prototype.moveTo = function(xTo, zTo){
 		moved = true;
 	}
 	
-	if (moved) this.doVerticalChecks();
+	if (moved) this.doVerticalChecks();*/
+	
+	var movement = vec2(xTo, zTo);
+	var spd = vec2(xTo * 5, zTo * 5);
+	var normal = this.mapManager.getWallNormal(this.position, spd, this.cameraHeight, this.onWater);
+	
+	if (normal){
+		normal = normal.clone();
+		var dist = movement.dot(normal);
+		normal.multiply(-dist);
+		movement.sum(normal);
+	}
+	
+	this.position.a += movement.a;
+	this.position.c += movement.b;
+	
 	return moved;
 };
 
