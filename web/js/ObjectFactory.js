@@ -3,7 +3,12 @@ var ObjectFactory = {
 		down:  vec2( 0, 1),
 		right: vec2( 1, 0),
 		up:    vec2( 0,-1),
-		left:  vec2(-1, 0)
+		left:  vec2(-1, 0),
+		
+		upRight:  vec2(Math.cos(Math.degToRad(45)), -Math.sin(Math.degToRad(45))),
+		upLeft:  vec2(-Math.cos(Math.degToRad(45)), -Math.sin(Math.degToRad(45))),
+		downRight:  vec2(Math.cos(Math.degToRad(45)), Math.sin(Math.degToRad(45))),
+		downLeft:  vec2(-Math.cos(Math.degToRad(45)), Math.sin(Math.degToRad(45)))
 	},
 	
 	angledWall: function(size, texRepeat, gl){

@@ -12,6 +12,17 @@ function $$(objId){
 	return elem;
 }
 
+function getHttp(){
+	var http;
+	if  (window.XMLHttpRequest){
+		http = new XMLHttpRequest();
+	}else if (window.ActiveXObject){
+		http = new window.ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	return http;
+}
+
 Math.radRelation = Math.PI / 180;
 Math.degToRad = function(degrees){
 	return degrees * this.radRelation;

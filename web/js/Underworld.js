@@ -17,6 +17,7 @@ function Underworld(){
 	this.keys = [];
 	this.mouse = vec3(0.0, 0.0, 0);
 	this.images = {};
+	this.music = {};
 	this.textures = [];
 	
 	this.fps = (1000 / 30) << 0;
@@ -25,8 +26,13 @@ function Underworld(){
 	this.firstFrame = Date.now();
 	
 	this.loadImages();
+	this.loadMusic();
 	this.loadTextures();
 }
+
+Underworld.prototype.loadMusic = function(){
+	this.music.britannian = this.GL.loadAudio("ogg/Britannian_music.ogg", true);
+};
 
 Underworld.prototype.loadImages = function(){
 	this.images.titleScreen = this.GL.loadImage("img/titleScreen.png", false);
@@ -42,6 +48,13 @@ Underworld.prototype.loadTextures = function(){
 	this.textures.push(this.GL.loadImage("img/texWater1_0.png", true, 5));
 	this.textures.push(this.GL.loadImage("img/texWater1_1.png", true, 6));
 	this.textures.push(this.GL.loadImage("img/texCeil1.png", true, 7));
+};
+
+Underworld.prototype.playMusic = function(musicCode){
+	var audioF = this.music[musicCode];
+	if (!audioF) return null;
+	
+	this.GL.playSound(audioF, true, true);
 };
 
 Underworld.prototype.getUI = function(){

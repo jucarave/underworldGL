@@ -2,8 +2,10 @@ function WebGL(size, position, container){
 	if (!this.initCanvas(size, position, container)) return null; 
 	this.initProperties();
 	this.processShaders();
+	this.initAudioEngine();
 	
 	this.images = [];
+	this.audio = [];
 }
 
 WebGL.prototype.initCanvas = function(size, position, container){
@@ -39,6 +41,13 @@ WebGL.prototype.initProperties = function(){
 	
 	this.aspectRatio = this.canvas.width / this.canvas.height;
 	this.perspectiveMatrix = Matrix.makePerspective(45, this.aspectRatio, 0.002, 200.0);
+};
+
+WebGL.prototype.initAudioEngine = function(){
+	if (window.AudioContext)
+		this.audioCtx = new AudioContext();
+	else
+		alert("Your browser doesn't suppor the Audio API");
 };
 
 WebGL.prototype.processShaders = function(){
@@ -187,4 +196,48 @@ WebGL.prototype.areImagesReady = function(){
 	}
 	
 	return true;
+};
+
+WebGL.prototype.loadAudio = function(url, isMusic){
+	var eng = this;
+	if (!eng.audioCtx) return null;
+	
+	var audio = {buffer: null, source: null, ready: false, isMusic: isMusic};
+	
+	var http = getHttp();
+	http.open('GET', url, true);
+	http.responseType = 'arraybuffer';
+	
+	http.onload = function(){
+		eng.audioCtx.decodeAudioData(http.response, function(buffer){
+			audio.buffer = buffer;
+			audio.ready = true;
+		}, function(msg){
+			alert(msg);
+		});
+	};
+	
+	http.send();
+	
+	this.audio.push(audio);
+	
+	return audio;
+};
+
+WebGL.prototype.playSound = function(soundFile, loop, tryIfNotReady){
+	var eng = this;
+	if (!soundFile || !soundFile.ready){
+		if (tryIfNotReady){ setTimeout(function(){ eng.playSound(soundFile, loop, tryIfNotReady); }, 300); } 
+		return;
+	}
+	
+	var source = eng.audioCtx.createBufferSource();
+	source.buffer = soundFile.buffer;
+	source.connect(eng.audioCtx.destination);
+	source.start(0);
+	source.loop = loop;
+	source.looping = loop;
+	
+	if (soundFile.isMusic)
+		soundFile.source = source;
 };

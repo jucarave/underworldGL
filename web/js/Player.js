@@ -17,8 +17,6 @@ function Player(position, direction, mapManager){
 }
 
 Player.prototype.moveTo = function(xTo, zTo){
-	// var A = xTo * 5;
-	// var B = zTo * 5;
 	var moved = false;
 	
 	if (this.onWater){
@@ -34,31 +32,28 @@ Player.prototype.moveTo = function(xTo, zTo){
 		if (this.jog.a <= -0.03 && this.jog.b == -1) this.jog.b = 1;
 	}
 	
-	/*if (!this.mapManager.isSolid(this.position.a + A, this.position.b, this.position.c, this.cameraHeight, this.onWater)){
-		this.position.a += xTo;
-		moved = true;
-	}
-	
-	if (!this.mapManager.isSolid(this.position.a, this.position.b, this.position.c + B, this.cameraHeight, this.onWater)){
-		this.position.c += zTo;
-		moved = true;
-	}
-	
-	if (moved) this.doVerticalChecks();*/
-	
 	var movement = vec2(xTo, zTo);
-	var spd = vec2(xTo * 5, zTo * 5);
-	var normal = this.mapManager.getWallNormal(this.position, spd, this.cameraHeight, this.onWater);
+	var spd = vec2(xTo * 2, 0);
 	
-	if (normal){
-		normal = normal.clone();
-		var dist = movement.dot(normal);
-		normal.multiply(-dist);
-		movement.sum(normal);
+	for (var i=0;i<2;i++){
+		var normal = this.mapManager.getWallNormal(this.position, spd, this.cameraHeight, this.onWater);
+		
+		if (normal){
+			normal = normal.clone();
+			var dist = movement.dot(normal);
+			normal.multiply(-dist);
+			movement.sum(normal);
+		}
+		
+		spd = vec2(0, zTo * 2);
 	}
 	
-	this.position.a += movement.a;
-	this.position.c += movement.b;
+	if (movement.a != 0 || movement.b != 0){
+		this.position.a += movement.a;
+		this.position.c += movement.b;
+		this.doVerticalChecks();
+		moved = true;
+	}
 	
 	return moved;
 };

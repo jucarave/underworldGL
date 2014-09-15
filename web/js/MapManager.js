@@ -87,6 +87,7 @@ MapManager.prototype.isWaterPosition = function(x, z){
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 	var xx = ((pos.a + spd.a) << 0);
 	var zz = ((pos.c + spd.b) << 0);
+	var y = pos.b;
 	
 	if (!this.map[zz]) return false;
 	if (this.map[zz][xx] === undefined) return false;
@@ -94,32 +95,34 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 	var t = this.map[zz][xx];
 	
 	var th = t.h - 0.3;
-	if (inWater) pos.b += 0.3;
+	if (inWater) y += 0.3;
 	
 	if (!t.w && !t.dw) return false;
-	if (t.y+th <= pos.b) return false;
-	else if (t.y > pos.b + h) return false;
+	if (t.y+th <= y) return false;
+	else if (t.y > y + h) return false;
 	
 	if (t.w){
 		var tex = this.game.getTextureById(t.w);
 		if (tex.isSolid){
 			var xxx = pos.a - xx;
 			var zzz = pos.c - zz;
-			if (zzz >= 0 && zzz < 1){
-				if (xxx <= 0){ return ObjectFactory.normals.left; }else
-				if (xxx >= 1){ return ObjectFactory.normals.right; }
-			}else if (xxx > 0 && xxx < 1){
-				if (zzz <= 0){ return ObjectFactory.normals.up; }else
-				if (zzz >= 1){ return ObjectFactory.normals.down; }
-			}
+			if (zzz <= 0){ return ObjectFactory.normals.up; }else
+			if (zzz >= 1){ return ObjectFactory.normals.down; }else
+			if (xxx <= 0){ return ObjectFactory.normals.left; }else
+			if (xxx >= 1){ return ObjectFactory.normals.right; }
 		}
 	}else if (t.dw){
-		var xxx, zzz;
-		if (t.aw == 0){ xxx = (xx + 1) - x; zzz =  z - zz; }
-		else if (t.aw == 1){ xxx = x - xx; zzz =  z - zz; }
-		else if (t.aw == 2){ xxx = x - xx; zzz =  (zz + 1) - z; }
-		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; }
-		return (zzz >= xxx);
+		var x, z, xxx, zzz, normal;
+		x = pos.a + spd.a;
+		z = pos.c + spd.b;
+		
+		if (t.aw == 0){ xxx = (xx + 1) - x; zzz =  z - zz; normal = ObjectFactory.normals.upLeft; }
+		else if (t.aw == 1){ xxx = x - xx; zzz =  z - zz; normal = ObjectFactory.normals.upRight; }
+		else if (t.aw == 2){ xxx = x - xx; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downRight; }
+		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downLeft; }
+		if (zzz >= xxx){
+			return normal;
+		}
 	}
 	
 	return null;
