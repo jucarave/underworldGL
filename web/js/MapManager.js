@@ -120,7 +120,7 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 		else if (t.aw == 1){ xxx = x - xx; zzz =  z - zz; normal = ObjectFactory.normals.upRight; }
 		else if (t.aw == 2){ xxx = x - xx; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downRight; }
 		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downLeft; }
-		if (zzz >= xxx){
+		if (zzz + 0.2 >= xxx){
 			return normal;
 		}
 	}
