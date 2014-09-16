@@ -315,6 +315,8 @@ var ObjectFactory = {
 		var w2 = -size.a * 0.25;
 		var w3 = size.a * 0.25;
 		
+		var h2 = size.b * 0.25;
+		
 		var tx = texRepeat.a;
 		var ty = texRepeat.b;
 		
@@ -340,22 +342,41 @@ var ObjectFactory = {
 			
 			// Left part of the door
 			// Front Face
-			w3,  h, -l,
 			 w,  h, -l,
-			w3, -h, -l,
 			 w, -h, -l,
+			w3,  h, -l,
+			w3, -h, -l,
 			
 			// Back Face
-			 w,  h,  l,
 			w3,  h,  l,
-			 w, -h,  l,
 			w3, -h,  l,
+			 w,  h,  l,
+			 w, -h,  l,
 			 
 			// Left Face
-			w3,  h,  l,
 			w3,  h, -l,
-			w3, -h,  l,
 			w3, -h, -l,
+			w3,  h,  l,
+			w3, -h,  l,
+			
+			// Middle part of the door
+			// Front Face
+			w3,  h, -l,
+			w3, h2, -l,
+			w2,  h, -l,
+			w2, h2, -l,
+			
+			// Back Face
+			w2,  h,  l,
+			w2, h2,  l,
+			w3,  h,  l,
+			w3, h2,  l,
+			 
+			// Bottom Face
+			w3, h2, -l,
+			w3, h2,  l,
+			w2, h2, -l,
+			w2, h2,  l,
 		];
 		
 		indices = [];
@@ -372,9 +393,17 @@ var ObjectFactory = {
 				0.00,0.0
 			);
 		}
+		for (var i=0;i<3;i++){
+			texCoords.push(
+				0.5,1.0,
+				0.5,0.75,
+				0.0,1.0,
+				0.0,0.75
+			);
+		}
 		
 		darkVertex = [];
-		for (var i=0;i<24;i++){
+		for (var i=0;i<36;i++){
 			darkVertex.push(0);
 		}
 		

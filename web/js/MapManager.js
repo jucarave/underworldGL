@@ -30,7 +30,7 @@ MapManager.prototype.createTestMap = function(){
 	P = {dw: 1, aw: 2, y: 0, h: 2, f: 1, c: 7};
 	Q = {dw: 1, aw: 3, y: 0, h: 2, f: 1, c: 7};
 	
-	R = {wd: 1, f: 4, c: 7, y: 0, h: 1, ch: 2};
+	R = {wd: 3, f: 4, c: 7, y: 0, h: 1, ch: 2};
 	
 	var I, J, K, L;
 	// Floors
