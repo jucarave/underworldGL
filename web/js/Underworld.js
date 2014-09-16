@@ -11,6 +11,7 @@ function Underworld(){
 	this.aWall = ObjectFactory.angledWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.doorW = ObjectFactory.doorWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	
 	this.scene = null;
 	this.map = null;
@@ -100,6 +101,14 @@ Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle){
 	game.aWall.position.set(x, y, z);
 	game.aWall.rotation.set(0, angle, 0);
 	game.GL.drawObject(game.aWall, camera, game.getTextureById(texId).texture);
+};
+
+Underworld.prototype.drawDoorWall = function(x, y, z, texId){
+	var game = this;
+	var camera = game.map.player;
+	
+	game.doorW.position.set(x, y, z);
+	game.GL.drawObject(game.doorW, camera, game.getTextureById(texId).texture);
 };
 
 Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
