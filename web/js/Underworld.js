@@ -7,11 +7,13 @@ function Underworld(){
 	
 	this.font = '10px "Courier"';
 	
-	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx, false);
 	this.aWall = ObjectFactory.angledWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	
 	this.doorW = ObjectFactory.doorWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.doorC = ObjectFactory.cube(vec3(1.0,1.0,0.1), vec2(1.0,1.0), this.GL.ctx, true);
 	
 	this.scene = null;
 	this.map = null;
@@ -103,12 +105,22 @@ Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle){
 	game.GL.drawObject(game.aWall, camera, game.getTextureById(texId).texture);
 };
 
-Underworld.prototype.drawDoorWall = function(x, y, z, texId){
+Underworld.prototype.drawDoorWall = function(x, y, z, texId, vertical){
 	var game = this;
 	var camera = game.map.player;
 	
 	game.doorW.position.set(x, y, z);
+	if (vertical) game.doorW.rotation.set(0,Math.PI_2,0); else game.doorW.rotation.set(0,0,0);
 	game.GL.drawObject(game.doorW, camera, game.getTextureById(texId).texture);
+};
+
+Underworld.prototype.drawDoorCube = function(x, y, z, texId, vertical){
+	var game = this;
+	var camera = game.map.player;
+	
+	game.doorC.position.set(x, y, z);
+	if (vertical) game.doorC.rotation.set(0,Math.PI_2,0); else game.doorC.rotation.set(0,0,0);
+	game.GL.drawObject(game.doorC, camera, game.getTextureById(texId).texture);
 };
 
 Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){

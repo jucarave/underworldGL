@@ -90,7 +90,7 @@ var ObjectFactory = {
 		return this.getObjectWithProperties(vertexBuffer, indicesBuffer, texBuffer, darkBuffer);
 	},
 	
-	cube: function(size, texRepeat, gl){
+	cube: function(size, texRepeat, gl, light){
 		var vertex, indices, texCoords, darkVertex;
 		var w = size.a / 2;
 		var h = size.b / 2;
@@ -142,7 +142,7 @@ var ObjectFactory = {
 		
 		darkVertex = [];
 		for (var i=0;i<16;i++){
-			if (i < 8) darkVertex.push(1); else darkVertex.push(0);
+			if (i < 8 && !light) darkVertex.push(1); else darkVertex.push(0);
 		}
 		
 		// Creates the buffer data for the vertices

@@ -13,7 +13,7 @@ function MapManager(game, map){
 }
 
 MapManager.prototype.createTestMap = function(){
-	var A, B, C, D, E, F, G, H, M, N, O, P, Q, R;
+	var A, B, C, D, E, F, G, H, M, N, O, P, Q, R, S;
 	// Walls
 	A = {w: 3, y: -1, h: 3};
 	B = {w: 3, y: 0, h: 2};
@@ -30,7 +30,8 @@ MapManager.prototype.createTestMap = function(){
 	P = {dw: 1, aw: 2, y: 0, h: 2, f: 1, c: 7};
 	Q = {dw: 1, aw: 3, y: 0, h: 2, f: 1, c: 7};
 	
-	R = {wd: 3, f: 4, c: 7, y: 0, h: 1, ch: 2};
+	R = {wd: 3, f: 4, c: 7, y: 0, h: 2, ch: 2, ver: 0};
+	S = {wd: 1, f: 1, c: 7, y: 0, h: 2, ch: 2, ver: 1};
 	
 	var I, J, K, L;
 	// Floors
@@ -50,7 +51,7 @@ MapManager.prototype.createTestMap = function(){
 		[0,0,0,0,0,0,B,J,B,0,0,0,0,D,D,K,D,0],
 		[0,0,0,0,0,0,B,J,B,0,0,0,D,D,K,K,D,D],
 		[0,0,0,0,0,0,B,J,B,B,B,B,D,K,K,K,K,D],
-		[0,0,0,0,0,0,B,M,J,J,J,J,J,K,N,O,K,D],
+		[0,0,0,0,0,0,B,M,J,J,J,J,S,K,N,O,K,D],
 		[0,0,0,0,0,0,B,B,B,B,R,B,D,K,Q,P,K,D],
 		[0,0,0,0,0,0,0,0,0,B,J,B,D,K,K,K,K,D],
 		[0,0,0,0,0,0,0,0,0,B,J,B,D,D,D,D,D,D],
@@ -99,7 +100,7 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 	var th = t.h - 0.3;
 	if (inWater) y += 0.3;
 	
-	if (!t.w && !t.dw) return false;
+	if (!t.w && !t.dw && !t.wd) return false;
 	if (t.y+th <= y) return false;
 	else if (t.y > y + h) return false;
 	
@@ -124,6 +125,21 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downLeft; }
 		if (zzz + 0.2 >= xxx){
 			return normal;
+		}
+	}else if (t.wd){
+		var xxx = (pos.a + spd.a) - xx;
+		var zzz = (pos.c + spd.b) - zz;
+		
+		var x = (pos.a - xx);
+		var z = (pos.c - zz);
+		if (t.ver){
+			if (zzz > 0.25 && zzz < 0.75) return null;
+			if (x < 0 || x > 1) return ObjectFactory.normals.left;
+			else return ObjectFactory.normals.up;
+		}else{
+			if (xxx > 0.25 && xxx < 0.75) return null;
+			if (z < 0 || z > 1) return ObjectFactory.normals.up;
+			else return ObjectFactory.normals.left;
 		}
 	}
 	
@@ -179,7 +195,12 @@ MapManager.prototype.drawMap = function(){
 				for (var wy=fy;wy<cy;wy++) this.game.drawAngledWall(j, wy, i, t.dw, t.aw);
 			}else if (t.wd){
 				// Wall Door 
-				for (var wy=fy;wy<cy;wy++) this.game.drawDoorWall(j, wy, i, t.wd);
+				for (var wy=fy;wy<cy;wy++){ 
+					if (wy == fy)
+						this.game.drawDoorWall(j, wy, i, t.wd, t.ver);
+					else 
+						this.game.drawDoorCube(j, wy, i, t.wd, t.ver);
+				}
 			}
 			
 			// Draw floor
