@@ -1,13 +1,13 @@
-attribute highp vec3 aVertexPosition;
-attribute highp vec2 aTextureCoord;
-attribute highp float aVertexIsDark;
+attribute mediump vec3 aVertexPosition;
+attribute mediump vec2 aTextureCoord;
+attribute mediump float aVertexIsDark;
 
-uniform highp mat4 uTransformationMatrix;
-uniform highp mat4 uPerspectiveMatrix;
+uniform mediump mat4 uTransformationMatrix;
+uniform mediump mat4 uPerspectiveMatrix;
 
-varying highp vec2 vTextureCoord;
-varying highp float vVertexIsDark;
-varying highp float vVertexDepth;
+varying mediump vec2 vTextureCoord;
+varying mediump float vVertexIsDark;
+varying mediump float vVertexDepth;
 
 void main(void){
 	gl_Position = uPerspectiveMatrix * uTransformationMatrix * vec4(aVertexPosition, 1.0);

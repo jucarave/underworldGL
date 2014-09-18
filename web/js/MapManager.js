@@ -162,13 +162,44 @@ MapManager.prototype.getYFloor = function(x, y){
 	return tt;
 };
 
+MapManager.prototype.getCameraViewBlocks = function(){
+	var x1, x2, y1, y2, p, ang;
+	
+	x1 = x2 = y1 = y2 = 0;
+	p = this.player;
+	ang = Math.radToDeg(p.rotation.b);
+	
+	if (ang >= 315 || ang < 45){
+		x1 = (p.position.a << 0);
+		x2 = x1 + 6;
+		y1 = (p.position.c << 0) - 6;
+		y2 = y1 + 12;
+	}else if (ang >= 45 && ang < 135){
+		x1 = (p.position.a << 0) - 6;
+		x2 = x1 + 12;
+		y1 = (p.position.c << 0) - 5;
+		y2 = y1 + 6;
+	}else if (ang >= 135 && ang < 225){
+		x1 = (p.position.a << 0) - 5;
+		x2 = x1 + 6;
+		y1 = (p.position.c << 0) - 6;
+		y2 = y1 + 12;
+	}else if (ang >= 225 && ang < 315){
+		x1 = (p.position.a << 0) - 6;
+		x2 = x1 + 12;
+		y1 = (p.position.c << 0);
+		y2 = y1 + 6;
+	}
+	
+	return vec4(x1,y1,x2,y2);
+};
+
 MapManager.prototype.drawMap = function(){
 	var x1, x2, y1, y2;
 	
-	x1 = (this.player.position.a << 0) - 10;
-	x2 = x1 + 20;
-	y1 = (this.player.position.c << 0) - 10;
-	y2 = y1 + 20;
+	var vec = this.getCameraViewBlocks();
+	x1 = vec.a; x2 = vec.c;
+	y1 = vec.b; y2 = vec.d;
 	
 	if (x1 < 0) x1 = 0;
 	if (x2 >= this.map[0].length) x2 = this.map[0].length;

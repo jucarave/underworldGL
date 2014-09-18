@@ -1,11 +1,11 @@
 uniform sampler2D uSampler;
 
-varying highp vec2 vTextureCoord;
-varying highp float vVertexIsDark;
-varying highp float vVertexDepth;
+varying mediump vec2 vTextureCoord;
+varying mediump float vVertexIsDark;
+varying mediump float vVertexDepth;
 
 void main(void){
-	highp vec4 color = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+	mediump vec4 color = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
 	
 	if (vVertexIsDark == 1.0){ color.rgb *= 0.5; }
 	

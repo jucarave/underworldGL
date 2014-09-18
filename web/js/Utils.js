@@ -24,8 +24,13 @@ function getHttp(){
 }
 
 Math.radRelation = Math.PI / 180;
+Math.degRelation = 180 / Math.PI;
 Math.degToRad = function(degrees){
 	return degrees * this.radRelation;
+};
+
+Math.radToDeg = function(radians){
+	return ((radians * this.degRelation) + 360) % 360;
 };
 
 Math.PI_2 = Math.PI / 2;

@@ -1,3 +1,4 @@
+var trianglesCount = 0;
 function Underworld(){
 	this.size = vec2(320, 200);
 	this.glpos = vec2(75, 36);
@@ -34,23 +35,23 @@ function Underworld(){
 }
 
 Underworld.prototype.loadMusic = function(){
-	this.music.britannian = this.GL.loadAudio("ogg/Britannian_music.ogg", true);
+	this.music.britannian = this.GL.loadAudio(cp + "ogg/Britannian_music.ogg?version=" + version, true);
 };
 
 Underworld.prototype.loadImages = function(){
-	this.images.titleScreen = this.GL.loadImage("img/titleScreen.png", false);
-	this.images.viewport = this.GL.loadImage("img/buUI.png", false);
+	this.images.titleScreen = this.GL.loadImage(cp + "img/titleScreen.png?version=" + version, false);
+	this.images.viewport = this.GL.loadImage(cp + "img/buUI.png?version=" + version, false);
 };
 
 Underworld.prototype.loadTextures = function(){
 	this.textures = [null];
-	this.textures.push(this.GL.loadImage("img/texWall1.png", true, 1, true));
-	this.textures.push(this.GL.loadImage("img/texWall2.png", true, 2, true));
-	this.textures.push(this.GL.loadImage("img/texWall3.png", true, 3, true));
-	this.textures.push(this.GL.loadImage("img/texFloor1.png", true, 4));
-	this.textures.push(this.GL.loadImage("img/texWater1_0.png", true, 5));
-	this.textures.push(this.GL.loadImage("img/texWater1_1.png", true, 6));
-	this.textures.push(this.GL.loadImage("img/texCeil1.png", true, 7));
+	this.textures.push(this.GL.loadImage(cp + "img/texWall1.png?version=" + version, true, 1, true));
+	this.textures.push(this.GL.loadImage(cp + "img/texWall2.png?version=" + version, true, 2, true));
+	this.textures.push(this.GL.loadImage(cp + "img/texWall3.png?version=" + version, true, 3, true));
+	this.textures.push(this.GL.loadImage(cp + "img/texFloor1.png?version=" + version, true, 4));
+	this.textures.push(this.GL.loadImage(cp + "img/texWater1_0.png?version=" + version, true, 5));
+	this.textures.push(this.GL.loadImage(cp + "img/texWater1_1.png?version=" + version, true, 6));
+	this.textures.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 7));
 };
 
 Underworld.prototype.playMusic = function(musicCode){
@@ -138,6 +139,8 @@ Underworld.prototype.drawFPS = function(/*float*/ now){
 	ctx.font = '10px "Courier"';
 	ctx.fillStyle = "white";
 	ctx.fillText("FPS: " + fps + "/30", 16, 16);
+	
+	ctx.fillText("TriCount: " + window.trianglesCount, 16, 24);
 };
 
 Underworld.prototype.loop = function(){
@@ -148,6 +151,7 @@ Underworld.prototype.loop = function(){
 	
 	// Limit the game to the base speed of the game
 	if (dT > game.fps){
+		window.trianglesCount = 0;
 		game.lastT = now - (dT % game.fps);
 		
 		if (this.map != null){
