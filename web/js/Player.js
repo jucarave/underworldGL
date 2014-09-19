@@ -107,6 +107,9 @@ Player.prototype.doVerticalChecks = function(){
 
 Player.prototype.step = function(){
 	this.movement();
+	if (this.mapManager.game.getKeyPressed(13)){
+		this.mapManager.getDoorAt(10.0, 0.0, 11.0).activate();
+	}
 	
 	if (this.targetY < this.position.b){
 		this.position.b -= 0.1;

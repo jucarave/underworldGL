@@ -435,5 +435,93 @@ var ObjectFactory = {
 		darkBuffer.itemSize = 1;
 		
 		return this.getObjectWithProperties(vertexBuffer, indicesBuffer, texBuffer, darkBuffer);
+	},
+	
+	door: function(size, texRepeat, gl, light){
+		var vertex, indices, texCoords, darkVertex;
+		var w = size.a;
+		var h = size.b;
+		var l = size.c / 2;
+		
+		var tx = texRepeat.a;
+		var ty = texRepeat.b;
+		
+		vertex = [
+			// Front Face
+			 w,  h, -l,
+			 w,  0, -l,
+			 0,  h, -l,
+			 0,  0, -l,
+			
+			// Back Face
+			 0,  h,  l,
+			 0,  0,  l,
+			 w,  h,  l,
+			 w,  0,  l,
+			 
+			// Right Face
+			 w,  h,  l,
+			 w,  0,  l,
+			 w,  h, -l,
+			 w,  0, -l,
+			 
+			// Left Face
+			 0,  h, -l,
+			 0,  0, -l,
+			 0,  h,  l,
+			 0,  0,  l,
+		];
+		
+		indices = [];
+		for (var i=0,len=vertex.length/3;i<len;i+=4){
+			indices.push(i, i+1, i+2, i+2, i+1, i+3);
+		}
+		
+		texCoords = [];
+		texCoords.push(tx, ty, tx,0.0, 0.0, ty, 0.0,0.0);
+		texCoords.push(0.0, ty, 0.0,0.0, tx, ty, tx,0.0);
+		for (var i=0;i<2;i++){
+			texCoords.push(
+				0.01,0.01,
+				0.01,0.0,
+				0.0 ,0.01,
+				0.0 ,0.0
+			);
+		}
+		
+		darkVertex = [];
+		for (var i=0;i<16;i++){
+			darkVertex.push(0);
+		}
+		
+		// Creates the buffer data for the vertices
+		var vertexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);
+		vertexBuffer.numItems = vertex.length;
+		vertexBuffer.itemSize = 3;
+		
+		// Creates the buffer data for the texture coordinates
+		var texBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, texBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
+		texBuffer.numItems = texCoords.length;
+		texBuffer.itemSize = 2;
+		
+		// Creates the buffer data for the indices
+		var indicesBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+		indicesBuffer.numItems = indices.length;
+		indicesBuffer.itemSize = 1;
+		
+		var darkBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, darkBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER,new Uint8Array(darkVertex), gl.STATIC_DRAW);
+		darkBuffer.numItems = darkBuffer.length;
+		darkBuffer.itemSize = 1;
+		
+		var door = this.getObjectWithProperties(vertexBuffer, indicesBuffer, texBuffer, darkBuffer);
+		return door;
 	}
 };

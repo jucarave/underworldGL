@@ -7,6 +7,7 @@ function MapManager(game, map){
 	this.game = game;
 	this.player = null;
 	this.instances = [];
+	this.doors = [];
 	
 	if (map == "test"){
 		this.createTestMap();
@@ -70,7 +71,7 @@ MapManager.prototype.createTestMap = function(){
 	this.waterTiles = [5];
 	this.player = new Player(vec3(7.5, 0.0, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
 	
-	this.instances.push({tex: "door1", position: vec3(10.0,-0.12,11.0)});
+	this.doors.push(new Door(vec3(9.75,-0.5,11.0), vec3(10.0, 0.0, 11.0), "door1"));
 };
 
 MapManager.prototype.isWaterTile = function(tileId){
@@ -88,6 +89,15 @@ MapManager.prototype.isWaterPosition = function(x, z){
 	if (!t.f) return false;
 	
 	return this.isWaterTile(t.f);
+};
+
+MapManager.prototype.getDoorAt = function(x, y, z){
+	for (var i=0,len=this.doors.length;i<len;i++){
+		var door = this.doors[i];
+		if (door.wallPosition.equals(x, y, z)) return door;
+	}
+	
+	return null;
 };
 
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
@@ -130,16 +140,19 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 			return normal;
 		}
 	}else if (t.wd){
+		var door = this.getDoorAt(xx, t.y, zz);
 		var xxx = (pos.a + spd.a) - xx;
 		var zzz = (pos.c + spd.b) - zz;
 		
 		var x = (pos.a - xx);
 		var z = (pos.c - zz);
 		if (t.ver){
+			if (door && door.closed) return ObjectFactory.normals.left;
 			if (zzz > 0.25 && zzz < 0.75) return null;
 			if (x < 0 || x > 1) return ObjectFactory.normals.left;
 			else return ObjectFactory.normals.up;
 		}else{
+			if (door && door.closed) return ObjectFactory.normals.up;
 			if (xxx > 0.25 && xxx < 0.75) return null;
 			if (z < 0 || z > 1) return ObjectFactory.normals.up;
 			else return ObjectFactory.normals.left;
@@ -266,8 +279,12 @@ MapManager.prototype.loop = function(){
 	
 	for (var i=0,len=this.instances.length;i<len;i++){
 		var ins = this.instances[i];
-		
-		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.tex);
+	}
+	
+	for (var i=0,len=this.doors.length;i<len;i++){
+		var ins = this.doors[i];
+		ins.loop();
+		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.rotation, ins.textureCode);
 	}
 	
 	this.drawMap();

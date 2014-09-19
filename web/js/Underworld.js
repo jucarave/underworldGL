@@ -13,7 +13,7 @@ function Underworld(){
 	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	
-	this.door = ObjectFactory.cube(vec3(0.5,0.75,0.1), vec2(1.0,1.0), this.GL.ctx, false);
+	this.door = ObjectFactory.door(vec3(0.5,0.75,0.1), vec2(1.0,1.0), this.GL.ctx, false);
 	this.doorW = ObjectFactory.doorWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.doorC = ObjectFactory.cube(vec3(1.0,1.0,0.1), vec2(1.0,1.0), this.GL.ctx, true);
 	
@@ -128,12 +128,13 @@ Underworld.prototype.drawDoorCube = function(x, y, z, texId, vertical){
 	game.GL.drawObject(game.doorC, camera, game.getTextureById(texId).texture);
 };
 
-Underworld.prototype.drawDoor = function(x, y, z, texId){
+Underworld.prototype.drawDoor = function(x, y, z, rotation, texId){
 	var game = this;
 	var camera = game.map.player;
 	
 	game.door.position.set(x, y, z);
-	game.GL.drawObject(game.door, camera, game.objectTex.door1.texture);
+	game.door.rotation.b = rotation;
+	game.GL.drawObject(game.door, camera, game.objectTex[texId].texture);
 };
 
 Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
