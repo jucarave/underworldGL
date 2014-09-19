@@ -6,6 +6,7 @@ function MapManager(game, map){
 	
 	this.game = game;
 	this.player = null;
+	this.instances = [];
 	
 	if (map == "test"){
 		this.createTestMap();
@@ -68,6 +69,8 @@ MapManager.prototype.createTestMap = function(){
 	
 	this.waterTiles = [5];
 	this.player = new Player(vec3(7.5, 0.0, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
+	
+	this.instances.push({tex: "door1", position: vec3(10.0,-0.12,11.0)});
 };
 
 MapManager.prototype.isWaterTile = function(tileId){
@@ -260,6 +263,12 @@ MapManager.prototype.loop = function(){
 	this.step();
 	
 	this.player.loop();
+	
+	for (var i=0,len=this.instances.length;i<len;i++){
+		var ins = this.instances[i];
+		
+		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.tex);
+	}
 	
 	this.drawMap();
 };

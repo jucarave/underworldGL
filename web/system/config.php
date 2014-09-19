@@ -1,7 +1,7 @@
 <?php
 	$version = "0.1";
 	$environment = "LOCAL";
-	$contextPath = "/underworldGL/web/";
+	$contextPath = "/underworldGL/";
 	
 	if ($environment == "SERVER"){
 		$contextPath = "/games/underworldGL/"; 

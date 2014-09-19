@@ -13,6 +13,7 @@ function Underworld(){
 	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	
+	this.door = ObjectFactory.cube(vec3(0.5,0.75,0.1), vec2(1.0,1.0), this.GL.ctx, false);
 	this.doorW = ObjectFactory.doorWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.doorC = ObjectFactory.cube(vec3(1.0,1.0,0.1), vec2(1.0,1.0), this.GL.ctx, true);
 	
@@ -23,6 +24,7 @@ function Underworld(){
 	this.images = {};
 	this.music = {};
 	this.textures = [];
+	this.objectTex = {};
 	
 	this.fps = (1000 / 30) << 0;
 	this.lastT = 0;
@@ -52,6 +54,8 @@ Underworld.prototype.loadTextures = function(){
 	this.textures.push(this.GL.loadImage(cp + "img/texWater1_0.png?version=" + version, true, 5));
 	this.textures.push(this.GL.loadImage(cp + "img/texWater1_1.png?version=" + version, true, 6));
 	this.textures.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 7));
+	
+	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
 };
 
 Underworld.prototype.playMusic = function(musicCode){
@@ -122,6 +126,14 @@ Underworld.prototype.drawDoorCube = function(x, y, z, texId, vertical){
 	game.doorC.position.set(x, y, z);
 	if (vertical) game.doorC.rotation.set(0,Math.PI_2,0); else game.doorC.rotation.set(0,0,0);
 	game.GL.drawObject(game.doorC, camera, game.getTextureById(texId).texture);
+};
+
+Underworld.prototype.drawDoor = function(x, y, z, texId){
+	var game = this;
+	var camera = game.map.player;
+	
+	game.door.position.set(x, y, z);
+	game.GL.drawObject(game.door, camera, game.objectTex.door1.texture);
 };
 
 Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
