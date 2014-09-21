@@ -71,7 +71,8 @@ MapManager.prototype.createTestMap = function(){
 	this.waterTiles = [5];
 	this.player = new Player(vec3(7.5, 0.0, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
 	
-	this.doors.push(new Door(vec3(9.75,-0.5,11.0), vec3(10.0, 0.0, 11.0), "door1"));
+	this.doors.push(new Door(vec3(10.0, 0.0, 11.0), "H", "door1"));
+	this.doors.push(new Door(vec3(12.0, 0.0, 10.0), "V", "door1"));
 };
 
 MapManager.prototype.isWaterTile = function(tileId){
@@ -283,6 +284,12 @@ MapManager.prototype.loop = function(){
 	
 	for (var i=0,len=this.doors.length;i<len;i++){
 		var ins = this.doors[i];
+		
+		var xx = Math.abs(ins.position.a - this.player.position.a);
+		var zz = Math.abs(ins.position.z - this.player.position.z);
+		
+		if (xx > 6 || zz > 6) continue;
+		
 		ins.loop();
 		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.rotation, ins.textureCode);
 	}

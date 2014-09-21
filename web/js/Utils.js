@@ -30,7 +30,7 @@ Math.degToRad = function(degrees){
 };
 
 Math.radToDeg = function(radians){
-	return ((radians * this.degRelation) + 360) % 360;
+	return ((radians * this.degRelation) + 720) % 360;
 };
 
 Math.PI_2 = Math.PI / 2;

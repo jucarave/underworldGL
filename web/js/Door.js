@@ -1,8 +1,12 @@
-function Door(position, wallPosition, textureCode){
-	this.position = position;
+function Door(wallPosition, dir, textureCode){
 	this.wallPosition = wallPosition;
 	this.rotation = 0;
+	this.dir = dir;
 	this.textureCode = textureCode;
+	
+	this.position = wallPosition.clone();
+	if (dir == "H"){ this.position.sum(vec3(-0.25, -0.5, 0.0)); }else
+	if (dir == "V"){ this.position.sum(vec3(0.0, -0.5, -0.25)); this.rotation = Math.PI_2; }
 	
 	this.closed = true;
 	this.animation =  0;
@@ -17,19 +21,22 @@ Door.prototype.activate = function(){
 };
 
 Door.prototype.loop = function(){
-	if (this.animation == 1 && this.rotation < Math.PI_2){
+	var an1 = ((this.animation == 1 && this.dir == "H") || (this.animation == 2 && this.dir == "V"));
+	var an2 = ((this.animation == 2 && this.dir == "H") || (this.animation == 1 && this.dir == "V"));
+	
+	if (an1 && this.rotation < Math.PI_2){
 		this.rotation += this.openSpeed;
 		if (this.rotation >= Math.PI_2){
 			this.rotation = Math.PI_2;
 			this.animation  = 0;
-			this.closed = false;
+			this.closed = (this.dir == "V");
 		}
-	}else if (this.animation == 2 && this.rotation > 0){
+	}else if (an2 && this.rotation > 0){
 		this.rotation -= this.openSpeed;
 		if (this.rotation <= 0){
 			this.rotation = 0;
 			this.animation  = 0;
-			this.closed = true;
+			this.closed = (this.dir == "H");
 		}
 	}
 };

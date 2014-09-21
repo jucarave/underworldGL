@@ -90,6 +90,16 @@ Player.prototype.movement = function(){
 	else if (this.rotation.a < -this.maxVertRotation) this.rotation.a = -this.maxVertRotation;
 };
 
+Player.prototype.checkDoor = function(){
+	if (this.mapManager.game.getKeyPressed(13)){
+		var xx = (this.position.a + Math.cos(this.rotation.b)) << 0;
+		var zz = (this.position.c - Math.sin(this.rotation.b)) << 0;
+		
+		var door = this.mapManager.getDoorAt(xx, this.position.b, zz);
+		if (door) door.activate();
+	}
+};
+
 Player.prototype.doVerticalChecks = function(){
 	var pointY = this.mapManager.getYFloor(this.position.a, this.position.c);
 	var wy = (this.onWater)? 0.3 : 0;
@@ -107,9 +117,7 @@ Player.prototype.doVerticalChecks = function(){
 
 Player.prototype.step = function(){
 	this.movement();
-	if (this.mapManager.game.getKeyPressed(13)){
-		this.mapManager.getDoorAt(10.0, 0.0, 11.0).activate();
-	}
+	this.checkDoor();
 	
 	if (this.targetY < this.position.b){
 		this.position.b -= 0.1;
