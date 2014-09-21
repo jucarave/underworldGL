@@ -20,10 +20,17 @@ Vec4.prototype.set = function(a, b, c, d){
 	if (c == undefined) c = 0;
 	if (d == undefined) d = 0;
 	
-	this.a = a;
-	this.b = b;
-	this.c = c;
-	this.d = d;
+	if (arguments.length == 1){
+		this.a = a.a;
+		this.b = a.b;
+		this.c = a.c;
+		this.d = a.d;
+	}else{
+		this.a = a;
+		this.b = b;
+		this.c = c;
+		this.d = d;
+	}
 };
 
 Vec4.prototype.clone = function(){

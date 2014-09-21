@@ -31,13 +31,19 @@ WebGL.prototype.initCanvas = function(size, position, container){
 	return true;
 };
 
+var gl;
 WebGL.prototype.initProperties = function(){
-	var gl = this.ctx;
+	gl = this.ctx;
 	
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
-	gl.enable(gl.CULL_FACE);
 	gl.depthFunc(gl.LEQUAL);
+	
+	gl.enable(gl.CULL_FACE);
+	
+	gl.enable( gl.BLEND );
+	gl.blendEquation( gl.FUNC_ADD );
+	gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
 	
 	this.aspectRatio = this.canvas.width / this.canvas.height;
 	this.perspectiveMatrix = Matrix.makePerspective(45, this.aspectRatio, 0.002, 200.0);

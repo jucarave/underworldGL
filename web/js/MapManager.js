@@ -7,6 +7,7 @@ function MapManager(game, map){
 	this.game = game;
 	this.player = null;
 	this.instances = [];
+	this.orderInstances = [];
 	this.doors = [];
 	
 	if (map == "test"){
@@ -73,6 +74,11 @@ MapManager.prototype.createTestMap = function(){
 	
 	this.doors.push(new Door(vec3(10.0, 0.0, 11.0), "H", "door1"));
 	this.doors.push(new Door(vec3(12.0, 0.0, 10.0), "V", "door1"));
+	
+	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this));
+	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this));
+	
+	this.getInstancesToDraw();
 };
 
 MapManager.prototype.isWaterTile = function(tileId){
@@ -273,13 +279,44 @@ MapManager.prototype.step = function(){
 	if (this.waterFrame >= 2) this.waterFrame = 0;
 };
 
+MapManager.prototype.getInstancesToDraw = function(){
+	this.orderInstances = [];
+	for (var i=0,len=this.instances.length;i<len;i++){
+		var ins = this.instances[i];
+		
+		var xx = Math.abs(ins.position.a - (this.player.position.a - 0.5));
+		var zz = Math.abs(ins.position.c - (this.player.position.c - 0.5));
+		
+		if (xx > 6 || zz > 6) continue;
+		
+		var dist = xx * xx + zz * zz;
+		var added = false;
+		for (var j=0,jlen=this.orderInstances.length;j<jlen;j++){
+			if (dist >= this.orderInstances[j].dist){
+				this.orderInstances.splice(j,0,{ins: ins, dist: dist});
+				added = true;
+				j = jlen;
+			}
+		}
+		
+		if (!added){
+			this.orderInstances.push({ins: ins, dist: dist});
+		}
+	}
+};
+
 MapManager.prototype.loop = function(){
 	this.step();
 	
+	this.drawMap();
 	this.player.loop();
 	
-	for (var i=0,len=this.instances.length;i<len;i++){
-		var ins = this.instances[i];
+	if (this.player.moved){ this.getInstancesToDraw(); }
+	
+	for (var i=0,len=this.orderInstances.length;i<len;i++){
+		var ins = this.orderInstances[i].ins;
+		
+		ins.loop();
 	}
 	
 	for (var i=0,len=this.doors.length;i<len;i++){
@@ -293,6 +330,4 @@ MapManager.prototype.loop = function(){
 		ins.loop();
 		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.rotation, ins.textureCode);
 	}
-	
-	this.drawMap();
 };

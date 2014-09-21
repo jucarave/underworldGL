@@ -14,6 +14,7 @@ function Player(position, direction, mapManager){
 	
 	this.jog = vec2(0.0, 1);
 	this.onWater = false;
+	this.moved = false;
 }
 
 Player.prototype.moveTo = function(xTo, zTo){
@@ -55,6 +56,7 @@ Player.prototype.moveTo = function(xTo, zTo){
 		moved = true;
 	}
 	
+	this.moved = moved;
 	return moved;
 };
 
@@ -129,5 +131,6 @@ Player.prototype.step = function(){
 };
 
 Player.prototype.loop = function(){
+	this.moved = false;
 	this.step();
 };

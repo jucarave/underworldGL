@@ -19,6 +19,7 @@
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Player.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/TitleScreen.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Door.js<?php echo $ver; ?>"></script>
+		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Billboard.js<?php echo $ver; ?>"></script>
 		
 		<script type="text/javascript">
 			var version = "<?php echo $version; ?>";

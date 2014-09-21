@@ -8,14 +8,7 @@ function Underworld(){
 	
 	this.font = '10px "Courier"';
 	
-	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx, false);
-	this.aWall = ObjectFactory.angledWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	
-	this.door = ObjectFactory.door(vec3(0.5,0.75,0.1), vec2(1.0,1.0), this.GL.ctx, false);
-	this.doorW = ObjectFactory.doorWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	this.doorC = ObjectFactory.cube(vec3(1.0,1.0,0.1), vec2(1.0,1.0), this.GL.ctx, true);
+	this.create3DObjects();
 	
 	this.scene = null;
 	this.map = null;
@@ -35,6 +28,19 @@ function Underworld(){
 	this.loadMusic();
 	this.loadTextures();
 }
+
+Underworld.prototype.create3DObjects = function(){
+	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx, false);
+	this.aWall = ObjectFactory.angledWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	
+	this.door = ObjectFactory.door(vec3(0.5,0.75,0.1), vec2(1.0,1.0), this.GL.ctx, false);
+	this.doorW = ObjectFactory.doorWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	this.doorC = ObjectFactory.cube(vec3(1.0,1.0,0.1), vec2(1.0,1.0), this.GL.ctx, true);
+	
+	this.billboard = ObjectFactory.billboard(vec3(1.0,1.0,0.0), vec2(1.0,1.0), this.GL.ctx);
+};
 
 Underworld.prototype.loadMusic = function(){
 	this.music.britannian = this.GL.loadAudio(cp + "ogg/Britannian_music.ogg?version=" + version, true);
@@ -56,6 +62,7 @@ Underworld.prototype.loadTextures = function(){
 	this.textures.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 7));
 	
 	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
+	this.objectTex.lamp1 = this.GL.loadImage(cp + "img/texLamp1.png?version=" + version, true);
 };
 
 Underworld.prototype.playMusic = function(musicCode){
@@ -144,6 +151,14 @@ Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
 	var floor = (ceil)? game.ceil : game.floor;
 	floor.position.set(x, y, z);
 	game.GL.drawObject(floor, camera, game.getTextureById(texId).texture);
+};
+
+Underworld.prototype.drawBillboard = function(position, texId){
+	var game = this;
+	var camera = game.map.player;
+	
+	game.billboard.position.set(position);
+	game.GL.drawObject(game.billboard, camera, game.objectTex[texId].texture);
 };
 
 Underworld.prototype.drawFPS = function(/*float*/ now){

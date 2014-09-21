@@ -7,8 +7,9 @@ varying mediump float vVertexDepth;
 void main(void){
 	mediump vec4 color = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
 	
-	if (vVertexIsDark == 1.0){ color.rgb *= 0.5; }
+	if (color.r == 1.0 && color.g == 0.0 && color.b == 1.0){ color.a = 0.0;  }
 	
+	if (vVertexIsDark == 1.0){ color.rgb *= 0.5; }
 	color.rgb *= vVertexDepth;
 	
 	gl_FragColor = color;
