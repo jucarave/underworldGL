@@ -293,19 +293,6 @@ var ObjectFactory = {
 		return this.getObjectWithProperties(vertexBuffer, indicesBuffer, texBuffer, darkBuffer);
 	},
 	
-	getObjectWithProperties: function(vertexBuffer, indexBuffer, texBuffer, darkBuffer){
-		var obj = {
-			rotation: vec3(0, 0, 0),
-			position: vec3(0, 0, 0),
-			vertexBuffer: vertexBuffer, 
-			indicesBuffer: indexBuffer, 
-			texBuffer: texBuffer,
-			darkBuffer: darkBuffer
-		};
-		
-		return obj;
-	},
-	
 	doorWall: function(size, texRepeat, gl){
 		var vertex, indices, texCoords, darkVertex;
 		var w = size.a / 2;
@@ -586,5 +573,18 @@ var ObjectFactory = {
 		var bill =  this.getObjectWithProperties(vertexBuffer, indicesBuffer, texBuffer, darkBuffer);
 		bill.isBillboard = true;
 		return bill;
+	},
+	
+	getObjectWithProperties: function(vertexBuffer, indexBuffer, texBuffer, darkBuffer){
+		var obj = {
+			rotation: vec3(0, 0, 0),
+			position: vec3(0, 0, 0),
+			vertexBuffer: vertexBuffer, 
+			indicesBuffer: indexBuffer, 
+			texBuffer: texBuffer,
+			darkBuffer: darkBuffer
+		};
+		
+		return obj;
 	}
 };

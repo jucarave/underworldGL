@@ -9,6 +9,7 @@ function Underworld(){
 	this.font = '10px "Courier"';
 	
 	this.create3DObjects();
+	AnimatedTexture.init(this.GL.ctx);
 	
 	this.scene = null;
 	this.map = null;
@@ -153,12 +154,13 @@ Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
 	game.GL.drawObject(floor, camera, game.getTextureById(texId).texture);
 };
 
-Underworld.prototype.drawBillboard = function(position, texId){
+Underworld.prototype.drawBillboard = function(position, texId, billboard){
 	var game = this;
 	var camera = game.map.player;
+	if (!billboard) billboard = game.billboard;
 	
-	game.billboard.position.set(position);
-	game.GL.drawObject(game.billboard, camera, game.objectTex[texId].texture);
+	billboard.position.set(position);
+	game.GL.drawObject(billboard, camera, game.objectTex[texId].texture);
 };
 
 Underworld.prototype.drawFPS = function(/*float*/ now){

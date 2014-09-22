@@ -31,9 +31,8 @@ WebGL.prototype.initCanvas = function(size, position, container){
 	return true;
 };
 
-var gl;
 WebGL.prototype.initProperties = function(){
-	gl = this.ctx;
+	var gl = this.ctx;
 	
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);

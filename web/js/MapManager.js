@@ -75,8 +75,8 @@ MapManager.prototype.createTestMap = function(){
 	this.doors.push(new Door(vec3(10.0, 0.0, 11.0), "H", "door1"));
 	this.doors.push(new Door(vec3(12.0, 0.0, 10.0), "V", "door1"));
 	
-	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this));
-	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this));
+	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0)}));
+	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0)}));
 	
 	this.getInstancesToDraw();
 };
@@ -107,22 +107,48 @@ MapManager.prototype.getDoorAt = function(x, y, z){
 	return null;
 };
 
+MapManager.prototype.getInstanceAt = function(position){
+	for (var i=0,len=this.instances.length;i<len;i++){
+		if (this.instances[i].position.equals(position)){
+			return this.instances[i];
+		}
+	}
+	
+	return null;
+};
+
+MapManager.prototype.getInstanceNormal = function(pos, spd){
+	var p = pos.clone();
+	p.sum(spd);
+	p.a = (p.a << 0);
+	p.b = (p.b << 0);
+	p.c = (p.c << 0);
+	
+	var ins = this.getInstanceAt(p);
+	if (!ins) return null;
+	
+	if (pos.a > ins.position.a + 1) return ObjectFactory.normals.right; else
+	if (pos.a < ins.position.a) return ObjectFactory.normals.left; else
+	if (pos.c < ins.position.c) return ObjectFactory.normals.up; else
+	if (pos.c > ins.position.c) return ObjectFactory.normals.down;
+};
+
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 	var xx = ((pos.a + spd.a) << 0);
 	var zz = ((pos.c + spd.b) << 0);
 	var y = pos.b;
 	
-	if (!this.map[zz]) return false;
-	if (this.map[zz][xx] === undefined) return false;
-	if (this.map[zz][xx] === 0) return false;
+	if (!this.map[zz]) return null;
+	if (this.map[zz][xx] === undefined) return null;
+	if (this.map[zz][xx] === 0) return null;
 	var t = this.map[zz][xx];
 	
 	var th = t.h - 0.3;
 	if (inWater) y += 0.3;
 	
-	if (!t.w && !t.dw && !t.wd) return false;
-	if (t.y+th <= y) return false;
-	else if (t.y > y + h) return false;
+	if (!t.w && !t.dw && !t.wd) return null;
+	if (t.y+th <= y) return null;
+	else if (t.y > y + h) return null;
 	
 	if (t.w){
 		var tex = this.game.getTextureById(t.w);
@@ -309,7 +335,6 @@ MapManager.prototype.loop = function(){
 	this.step();
 	
 	this.drawMap();
-	this.player.loop();
 	
 	if (this.player.moved){ this.getInstancesToDraw(); }
 	
@@ -330,4 +355,6 @@ MapManager.prototype.loop = function(){
 		ins.loop();
 		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.rotation, ins.textureCode);
 	}
+	
+	this.player.loop();
 };

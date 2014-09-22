@@ -38,6 +38,7 @@ Player.prototype.moveTo = function(xTo, zTo){
 	
 	for (var i=0;i<2;i++){
 		var normal = this.mapManager.getWallNormal(this.position, spd, this.cameraHeight, this.onWater);
+		if (!normal){ normal = this.mapManager.getInstanceNormal(this.position, spd); } 
 		
 		if (normal){
 			normal = normal.clone();
