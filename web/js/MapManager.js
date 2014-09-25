@@ -180,12 +180,12 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 		var x = (pos.a - xx);
 		var z = (pos.c - zz);
 		if (t.ver){
-			if (door && door.closed) return ObjectFactory.normals.left;
+			if (door && door.isSolid()) return ObjectFactory.normals.left;
 			if (zzz > 0.25 && zzz < 0.75) return null;
 			if (x < 0 || x > 1) return ObjectFactory.normals.left;
 			else return ObjectFactory.normals.up;
 		}else{
-			if (door && door.closed) return ObjectFactory.normals.up;
+			if (door && door.isSolid()) return ObjectFactory.normals.up;
 			if (xxx > 0.25 && xxx < 0.75) return null;
 			if (z < 0 || z > 1) return ObjectFactory.normals.up;
 			else return ObjectFactory.normals.left;

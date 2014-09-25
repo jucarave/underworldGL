@@ -20,6 +20,11 @@ Door.prototype.activate = function(){
 	else this.animation = 2; 
 };
 
+Door.prototype.isSolid = function(){
+	if (this.animation != 0) return true;
+	return this.closed;
+};
+
 Door.prototype.loop = function(){
 	var an1 = ((this.animation == 1 && this.dir == "H") || (this.animation == 2 && this.dir == "V"));
 	var an2 = ((this.animation == 2 && this.dir == "H") || (this.animation == 1 && this.dir == "V"));

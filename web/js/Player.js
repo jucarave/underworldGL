@@ -98,6 +98,8 @@ Player.prototype.checkDoor = function(){
 		var xx = (this.position.a + Math.cos(this.rotation.b)) << 0;
 		var zz = (this.position.c - Math.sin(this.rotation.b)) << 0;
 		
+		if ((this.position.a << 0) == xx && (this.position.c << 0) == zz) return;
+		
 		var door = this.mapManager.getDoorAt(xx, this.position.b, zz);
 		if (door) door.activate();
 	}

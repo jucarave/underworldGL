@@ -1,15 +1,21 @@
 var AnimatedTexture = {
 	_3Frames: [],
+	_4Frames: [],
 	
 	init: function(gl){
-		// 3 Frames
+		// 3 Frames, 4 Frames
 		var coords;
 		coords = [0.25,1.00,0.00,1.00,0.25,0.00,0.00,0.00];
 		this._3Frames.push(this.prepareBuffer(coords, gl));
+		this._4Frames.push(this.prepareBuffer(coords, gl));
 		coords = [0.50,1.00,0.25,1.00,0.50,0.00,0.25,0.00];
 		this._3Frames.push(this.prepareBuffer(coords, gl));
+		this._4Frames.push(this.prepareBuffer(coords, gl));
 		coords = [0.75,1.00,0.50,1.00,0.75,0.00,0.50,0.00];
 		this._3Frames.push(this.prepareBuffer(coords, gl));
+		this._4Frames.push(this.prepareBuffer(coords, gl));
+		coords = [1.00,1.00,0.75,1.00,1.00,0.00,0.75,0.00];
+		this._4Frames.push(this.prepareBuffer(coords, gl));
 	},
 	
 	prepareBuffer: function(coords, gl){
@@ -23,6 +29,7 @@ var AnimatedTexture = {
 	},
 	
 	getByNumFrames: function(numFrames){
-		if (numFrames == 3) return this._3Frames;
+		if (numFrames == 3) return this._3Frames; else
+		if (numFrames == 4) return this._4Frames;
 	}
 };

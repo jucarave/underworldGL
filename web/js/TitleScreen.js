@@ -1,13 +1,15 @@
 function TitleScreen(/*Game*/ game){
 	this.game = game;
 	this.blink = 30;
+	
+	this.game.playMusic("title");
 }
 
 TitleScreen.prototype.step = function(){
 	if (this.game.getKeyPressed(13) || this.game.getMouseButtonPressed()){
 		this.game.loadMap("test");
 		this.game.scene = null;
-		//this.game.playMusic("britannian");
+		this.game.playMusic("britannian");
 	}
 };
 
