@@ -234,10 +234,11 @@ WebGL.prototype.loadAudio = function(url, isMusic){
 WebGL.prototype.playSound = function(soundFile, loop, tryIfNotReady){
 	var eng = this;
 	if (!soundFile || !soundFile.ready){
-		if (tryIfNotReady){ setTimeout(function(){ eng.playSound(soundFile, loop, tryIfNotReady); }, 300); } 
+		if (tryIfNotReady){ soundFile.timeO = setTimeout(function(){ eng.playSound(soundFile, loop, tryIfNotReady); }, 300); } 
 		return;
 	}
 	
+	soundFile.timeO = null;
 	var source = eng.audioCtx.createBufferSource();
 	source.buffer = soundFile.buffer;
 	source.connect(eng.audioCtx.destination);

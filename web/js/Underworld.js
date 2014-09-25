@@ -72,7 +72,9 @@ Underworld.prototype.stopMusic = function(){
 	for (var i in this.music){
 		var audio = this.music[i];
 		
-		if (audio.isMusic && audio.source){
+		if (audio.timeO){
+			clearTimeout(audio.timeO);
+		}else if (audio.isMusic && audio.source){
 			audio.source.stop();
 			audio.source = null;
 		}
