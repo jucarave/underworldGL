@@ -12,27 +12,27 @@ function Player(position, direction, mapManager){
 	this.ySpeed = 0.0;
 	this.yGravity = 0.0;
 	
-	this.jog = vec2(0.0, 1);
+	this.jog = vec4(0.0, 1, 0.0, 1);
 	this.onWater = false;
 	this.moved = false;
 }
 
-Player.prototype.moveTo = function(xTo, zTo){
-	var moved = false;
-	
+Player.prototype.jogMovement = function(){
 	if (this.onWater){
 		this.jog.a += 0.01 * this.jog.b;
 		if (this.jog.a >= 0.03 && this.jog.b == 1) this.jog.b = -1; else
 		if (this.jog.a <= -0.03 && this.jog.b == -1) this.jog.b = 1;
-		
-		xTo /= 2;
-		zTo /= 2;
 	}else{
 		this.jog.a += 0.008 * this.jog.b;
 		if (this.jog.a >= 0.03 && this.jog.b == 1) this.jog.b = -1; else
 		if (this.jog.a <= -0.03 && this.jog.b == -1) this.jog.b = 1;
 	}
+};
+
+Player.prototype.moveTo = function(xTo, zTo){
+	var moved = false;
 	
+	if (this.onWater){ xTo /= 2; zTo /=2; }
 	var movement = vec2(xTo, zTo);
 	var spd = vec2(xTo * 2, 0);
 	
@@ -54,6 +54,7 @@ Player.prototype.moveTo = function(xTo, zTo){
 		this.position.a += movement.a;
 		this.position.c += movement.b;
 		this.doVerticalChecks();
+		this.jogMovement();
 		moved = true;
 	}
 	
@@ -88,7 +89,7 @@ Player.prototype.movement = function(){
 		B = -Math.sin(this.rotation.b - Math.PI_2) * this.movementSpd;
 	}
 	
-	if (A != 0.0 || B != 0.0){ this.moveTo(A, B); }else{ this.jog.a = 0; }
+	if (A != 0.0 || B != 0.0){ this.moveTo(A, B); }else{ this.jog.a = 0.0; }
 	if (this.rotation.a > this.maxVertRotation) this.rotation.a = this.maxVertRotation;
 	else if (this.rotation.a < -this.maxVertRotation) this.rotation.a = -this.maxVertRotation;
 };
@@ -109,26 +110,41 @@ Player.prototype.doVerticalChecks = function(){
 	var pointY = this.mapManager.getYFloor(this.position.a, this.position.c);
 	var wy = (this.onWater)? 0.3 : 0;
 	if (pointY - this.position.b - wy <= 0.3) this.targetY = pointY;
-	if (this.mapManager.isWaterPosition(this.position.a, this.position.c) && this.position.b == this.targetY){
-		this.movementSpd = 0.05;
+	if (this.mapManager.isWaterPosition(this.position.a, this.position.c)){
+		if (this.position.b == this.targetY)
+			this.movementSpd = 0.05;
 		this.onWater = true;
 	}else{
 		this.movementSpd = 0.1;
 		this.onWater = false;
 	}
 	
-	this.cameraHeight = 0.5 + this.jog.a;
+	this.cameraHeight = 0.5 + this.jog.a + this.jog.c;
+};
+
+Player.prototype.doFloat = function(){
+	if (this.onWater && this.jog.a == 0.0){
+		this.jog.c += 0.01 * this.jog.d;
+		if (this.jog.c >= 0.03 && this.jog.d == 1) this.jog.d = -1; else
+		if (this.jog.c <= -0.03 && this.jog.d == -1) this.jog.d = 1;
+		this.cameraHeight = 0.5 + this.jog.a + this.jog.c;
+	}else{
+		this.jog.c = 0.0;
+	}
 };
 
 Player.prototype.step = function(){
+	this.doFloat();
 	this.movement();
 	this.checkDoor();
 	
 	if (this.targetY < this.position.b){
 		this.position.b -= 0.1;
+		this.jog.a = 0.0;
 		if (this.position.b <= this.targetY) this.position.b = this.targetY;
 	}else if (this.targetY > this.position.b){
 		this.position.b += 0.08;
+		this.jog.a = 0.0;
 		if (this.position.b >= this.targetY) this.position.b = this.targetY;
 	}
 };
