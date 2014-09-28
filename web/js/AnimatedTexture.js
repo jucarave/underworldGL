@@ -1,8 +1,13 @@
 var AnimatedTexture = {
+	_1Frame: [],
 	_3Frames: [],
 	_4Frames: [],
 	
 	init: function(gl){
+		// 1 Frame
+		var coords = [1.0,1.0,0.0,1.0,1.0,0.00,0.00,0.00];
+		this._1Frame.push(this.prepareBuffer(coords, gl));
+		
 		// 3 Frames, 4 Frames
 		var coords;
 		coords = [0.25,1.00,0.00,1.00,0.25,0.00,0.00,0.00];
@@ -29,6 +34,7 @@ var AnimatedTexture = {
 	},
 	
 	getByNumFrames: function(numFrames){
+		if (numFrames == 1) return this._1Frame; else
 		if (numFrames == 3) return this._3Frames; else
 		if (numFrames == 4) return this._4Frames;
 	}

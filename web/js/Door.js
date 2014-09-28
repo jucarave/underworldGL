@@ -1,4 +1,4 @@
-function Door(wallPosition, dir, textureCode){
+function Door(wallPosition, dir, textureCode, lock){
 	this.wallPosition = wallPosition;
 	this.rotation = 0;
 	this.dir = dir;
@@ -8,6 +8,7 @@ function Door(wallPosition, dir, textureCode){
 	if (dir == "H"){ this.position.sum(vec3(-0.25, -0.5, 0.0)); }else
 	if (dir == "V"){ this.position.sum(vec3(0.0, -0.5, -0.25)); this.rotation = Math.PI_2; }
 	
+	this.lock = lock;
 	this.closed = true;
 	this.animation =  0;
 	this.openSpeed = Math.degToRad(10);
@@ -15,6 +16,10 @@ function Door(wallPosition, dir, textureCode){
 
 Door.prototype.activate = function(){
 	if (this.animation != 0) return;
+	
+	if (this.lock){
+		return;
+	}
 	
 	if (this.closed) this.animation = 1;
 	else this.animation = 2; 

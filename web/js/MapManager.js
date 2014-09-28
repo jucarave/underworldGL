@@ -75,8 +75,8 @@ MapManager.prototype.createTestMap = function(){
 	this.doors.push(new Door(vec3(10.0, 0.0, 11.0), "H", "door1"));
 	this.doors.push(new Door(vec3(12.0, 0.0, 10.0), "V", "door1"));
 	
-	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0)}));
-	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0)}));
+	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
+	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
 	
 	this.getInstancesToDraw();
 };

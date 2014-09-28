@@ -64,6 +64,7 @@ Underworld.prototype.loadTextures = function(){
 	this.textures.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 7));
 	
 	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
+	this.objectTex.lamp1Off = this.GL.loadImage(cp + "img/texLamp1_off.png?version=" + version, true);
 	this.objectTex.lamp1 = this.GL.loadImage(cp + "img/texLamp1.png?version=" + version, true);
 	this.objectTex.bat = this.GL.loadImage(cp + "img/bat.png?version=" + version, true);
 };

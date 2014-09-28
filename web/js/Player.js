@@ -19,7 +19,7 @@ function Player(position, direction, mapManager){
 
 Player.prototype.jogMovement = function(){
 	if (this.onWater){
-		this.jog.a += 0.01 * this.jog.b;
+		this.jog.a += 0.005 * this.jog.b;
 		if (this.jog.a >= 0.03 && this.jog.b == 1) this.jog.b = -1; else
 		if (this.jog.a <= -0.03 && this.jog.b == -1) this.jog.b = 1;
 	}else{
@@ -94,7 +94,7 @@ Player.prototype.movement = function(){
 	else if (this.rotation.a < -this.maxVertRotation) this.rotation.a = -this.maxVertRotation;
 };
 
-Player.prototype.checkDoor = function(){
+Player.prototype.checkAction = function(){
 	if (this.mapManager.game.getKeyPressed(13)){
 		var xx = (this.position.a + Math.cos(this.rotation.b)) << 0;
 		var zz = (this.position.c - Math.sin(this.rotation.b)) << 0;
@@ -102,7 +102,13 @@ Player.prototype.checkDoor = function(){
 		if ((this.position.a << 0) == xx && (this.position.c << 0) == zz) return;
 		
 		var door = this.mapManager.getDoorAt(xx, this.position.b, zz);
-		if (door) door.activate();
+		if (door){ 
+			door.activate();
+		}else{
+			var object = this.mapManager.getInstanceAt(vec3(xx, this.position.b, zz));
+			if (object && object.activate)
+				object.activate();
+		}
 	}
 };
 
@@ -124,7 +130,7 @@ Player.prototype.doVerticalChecks = function(){
 
 Player.prototype.doFloat = function(){
 	if (this.onWater && this.jog.a == 0.0){
-		this.jog.c += 0.01 * this.jog.d;
+		this.jog.c += 0.005 * this.jog.d;
 		if (this.jog.c >= 0.03 && this.jog.d == 1) this.jog.d = -1; else
 		if (this.jog.c <= -0.03 && this.jog.d == -1) this.jog.d = 1;
 		this.cameraHeight = 0.5 + this.jog.a + this.jog.c;
@@ -136,7 +142,7 @@ Player.prototype.doFloat = function(){
 Player.prototype.step = function(){
 	this.doFloat();
 	this.movement();
-	this.checkDoor();
+	this.checkAction();
 	
 	if (this.targetY < this.position.b){
 		this.position.b -= 0.1;
