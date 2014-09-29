@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/AnimatedTexture.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Door.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Billboard.js<?php echo $ver; ?>"></script>
+		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Console.js<?php echo $ver; ?>"></script>
 		
 		<script type="text/javascript">
 			var version = "<?php echo $version; ?>";

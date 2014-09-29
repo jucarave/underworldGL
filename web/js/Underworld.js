@@ -1,3 +1,11 @@
+/*===================================================
+				 BUGL Source Code
+				
+			By Camilo Ramírez (Jucarave)
+			
+					  2014
+===================================================*/
+
 var trianglesCount = 0;
 function Underworld(){
 	this.size = vec2(320, 200);
@@ -6,6 +14,7 @@ function Underworld(){
 	this.GL = new WebGL(this.size, this.glpos, $$("divGame"));
 	this.UI = new UI(this.size, $$("divGame"));
 	
+	this.console = new Console(10, 15, 13, this);
 	this.font = '10px "Courier"';
 	
 	this.create3DObjects();
@@ -51,6 +60,7 @@ Underworld.prototype.loadMusic = function(){
 Underworld.prototype.loadImages = function(){
 	this.images.titleScreen = this.GL.loadImage(cp + "img/titleScreen.png?version=" + version, false);
 	this.images.viewport = this.GL.loadImage(cp + "img/buUI.png?version=" + version, false);
+	this.images.scrollFont = this.GL.loadImage(cp + "img/scrollFontWhite.png?version=" + version, false);
 };
 
 Underworld.prototype.loadTextures = function(){
@@ -106,10 +116,22 @@ Underworld.prototype.loadMap = function(map){
 	game.scene = null;
 };
 
+Underworld.prototype.printGreet = function(){
+	// Shows a welcome message with the game instructions.
+	this.console.addSFMessage("Welcome to BUGL alpha test!");
+	this.console.addSFMessage("Press WASD to move, QE to turn around");
+	this.console.addSFMessage("1/3 to look up/down, 2 to restore");
+	this.console.addSFMessage("Click to interact with objects");
+	this.console.addSFMessage("Have fun!");
+};
+
 Underworld.prototype.loadGame = function(){
 	var game = this;
 	
 	if (game.GL.areImagesReady()){
+		game.console.createSpriteFont(game.images.scrollFont, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?,./", 6);
+		game.printGreet();
+		
 		game.scene = new TitleScreen(game);
 		game.loop();
 	}else{
@@ -210,6 +232,7 @@ Underworld.prototype.loop = function(){
 			game.map.loop();
 			
 			game.UI.ctx.drawImage(game.images.viewport,0,0);
+			game.console.render(242, 11);
 		}
 		
 		if (this.scene != null){
