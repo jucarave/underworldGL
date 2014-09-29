@@ -77,6 +77,7 @@ MapManager.prototype.createTestMap = function(){
 	
 	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
 	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
+	this.instances.push(new Item(vec3(15.0,0.0,7.0), ItemFactory.getItemByCode("key", 1), this));
 	
 	this.getInstancesToDraw();
 };

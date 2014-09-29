@@ -2,6 +2,7 @@ var AnimatedTexture = {
 	_1Frame: [],
 	_3Frames: [],
 	_4Frames: [],
+	itemCoords: [],
 	
 	init: function(gl){
 		// 1 Frame
@@ -37,5 +38,27 @@ var AnimatedTexture = {
 		if (numFrames == 1) return this._1Frame; else
 		if (numFrames == 3) return this._3Frames; else
 		if (numFrames == 4) return this._4Frames;
+	},
+	
+	parseItemTexCoord: function(subImg, image, gl){
+		var wx, wy, ww, wh;
+		ww = 1 / image.imgNum;
+		wh = 1 / image.vImgNum;
+		
+		wx = ww * subImg.a;
+		wy = wh * subImg.b;
+		ww = wx + ww;
+		wh = wy + wh;
+		
+		var code = "si_" + wx + "_" + wy + "_" + ww + "_" + wh;
+		for (var i=0,len=this.itemCoords.length;i<len;i++){
+			if (this.itemCoords[i].code == code)
+				return this.itemCoords[i].buffer;
+		}
+		
+		var buffer = this.prepareBuffer([ww,wh,wx,wh,ww,wy,wx,wy], gl);
+		this.itemCoords.push({code: code, buffer: buffer});
+		
+		return buffer;
 	}
 };

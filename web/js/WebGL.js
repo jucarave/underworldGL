@@ -115,7 +115,11 @@ WebGL.prototype.getShaderCode = function(shader){
 	return code;
 };
 
-WebGL.prototype.loadImage = function(src, makeItTexture, textureIndex, isSolid){
+WebGL.prototype.loadImage = function(src, makeItTexture, textureIndex, isSolid, params){
+	if (!params) params = {};
+	if (!params.imgNum) params.imgNum = 1;
+	if (!params.imgVNum) params.imgVNum = 1;
+	
 	var gl = this;
 	var img = new Image();
 	
@@ -124,6 +128,8 @@ WebGL.prototype.loadImage = function(src, makeItTexture, textureIndex, isSolid){
 	img.texture = null;
 	img.textureIndex = textureIndex;
 	img.isSolid = (isSolid === true);
+	img.imgNum = params.imgNum;
+	img.vImgNum = params.imgVNum;
 	
 	addEvent(img, "load", function(){
 		img.ready = true;

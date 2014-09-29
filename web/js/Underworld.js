@@ -14,6 +14,7 @@ function Underworld(){
 	this.GL = new WebGL(this.size, this.glpos, $$("divGame"));
 	this.UI = new UI(this.size, $$("divGame"));
 	
+	this.inventory = new Inventory();
 	this.console = new Console(10, 15, 13, this);
 	this.font = '10px "Courier"';
 	
@@ -77,6 +78,7 @@ Underworld.prototype.loadTextures = function(){
 	this.objectTex.lamp1Off = this.GL.loadImage(cp + "img/texLamp1_off.png?version=" + version, true);
 	this.objectTex.lamp1 = this.GL.loadImage(cp + "img/texLamp1.png?version=" + version, true);
 	this.objectTex.bat = this.GL.loadImage(cp + "img/bat.png?version=" + version, true);
+	this.objectTex.items = this.GL.loadImage(cp + "img/texItems.png?version=" + version, true, {imgNum: 1, imgVNum: 1});
 };
 
 Underworld.prototype.stopMusic = function(){
@@ -108,6 +110,12 @@ Underworld.prototype.getTextureById = function(textureId){
 	if (!this.textures[textureId]) throw "Invalid textureId: " + textureId;
 	
 	return this.textures[textureId];
+};
+
+Underworld.prototype.getObjectTexture = function(textureCode){
+	if (!this.objectTex[textureCode]) throw "Invalid texture code: " + textureCode;
+	
+	return this.objectTex[textureCode];
 };
 
 Underworld.prototype.loadMap = function(map){
