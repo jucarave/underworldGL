@@ -120,10 +120,9 @@ MapManager.prototype.getInstanceAt = function(position){
 
 MapManager.prototype.getInstanceNormal = function(pos, spd){
 	var p = pos.clone();
-	p.sum(spd);
-	p.a = (p.a << 0);
+	p.a = ((p.a + spd.a) << 0);
 	p.b = (p.b << 0);
-	p.c = (p.c << 0);
+	p.c = ((p.c + spd.b) << 0);
 	
 	var ins = this.getInstanceAt(p);
 	if (!ins) return null;
@@ -131,7 +130,7 @@ MapManager.prototype.getInstanceNormal = function(pos, spd){
 	if (pos.a > ins.position.a + 1) return ObjectFactory.normals.right; else
 	if (pos.a < ins.position.a) return ObjectFactory.normals.left; else
 	if (pos.c < ins.position.c) return ObjectFactory.normals.up; else
-	if (pos.c > ins.position.c) return ObjectFactory.normals.down;
+	if (pos.c > ins.position.c + 1) return ObjectFactory.normals.down;
 };
 
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
