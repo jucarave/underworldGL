@@ -14,7 +14,7 @@ function Underworld(){
 	this.GL = new WebGL(this.size, this.glpos, $$("divGame"));
 	this.UI = new UI(this.size, $$("divGame"));
 	
-	this.inventory = new Inventory();
+	this.inventory = new Inventory(10);
 	this.console = new Console(10, 15, 13, this);
 	this.font = '10px "Courier"';
 	

@@ -1,16 +1,19 @@
 var ItemFactory = {
-	key: {code: "key", tex: "items", subImg: vec2(0,0), stack: true},
+	items: {
+		key: {code: "key", name: "Gold key", tex: "items", subImg: vec2(0,0), stack: false},
+	},
 	
 	getItemByCode: function(itemCode, amount){
-		if (!ItemFactory[itemCode]) throw "Invalid Item code: " + itemCode;
+		if (!ItemFactory.items[itemCode]) throw "Invalid Item code: " + itemCode;
 		
-		var item = ItemFactory[itemCode];
+		var item = ItemFactory.items[itemCode];
 		var ret = {};
 		for (var i in item){
 			ret[i] = item[i];
 		}
 		
-		ret.amoutn = amount;
+		ret.amount = amount;
+		ret.isItem = true;
 		
 		return ret;
 	}

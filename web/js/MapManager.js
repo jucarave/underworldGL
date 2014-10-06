@@ -339,7 +339,15 @@ MapManager.prototype.loop = function(){
 	if (this.player.moved){ this.getInstancesToDraw(); }
 	
 	for (var i=0,len=this.orderInstances.length;i<len;i++){
-		var ins = this.orderInstances[i].ins;
+		var ins = this.orderInstances[i];
+		
+		if (!ins) continue;
+		ins = ins.ins;
+		
+		if (ins.destroyed){
+			this.orderInstances.splice(i--,1);
+			continue;
+		}
 		
 		ins.loop();
 	}
