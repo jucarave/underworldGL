@@ -1,4 +1,5 @@
-function Door(wallPosition, dir, textureCode, lock){
+function Door(mapManager, wallPosition, dir, textureCode, lock){
+	this.mapManager = mapManager;
 	this.wallPosition = wallPosition;
 	this.rotation = 0;
 	this.dir = dir;
@@ -18,7 +19,15 @@ Door.prototype.activate = function(){
 	if (this.animation != 0) return;
 	
 	if (this.lock){
-		return;
+		var key = this.mapManager.getPlayerItem(this.lock);
+		if (key){
+			this.mapManager.addMessage(key.name + " used");
+			this.mapManager.removePlayerItem(this.lock);
+			this.lock = null;
+		}else{
+			this.mapManager.addMessage("Locked");
+			return;
+		}
 	}
 	
 	if (this.closed) this.animation = 1;

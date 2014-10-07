@@ -72,12 +72,12 @@ MapManager.prototype.createTestMap = function(){
 	this.waterTiles = [5];
 	this.player = new Player(vec3(7.5, 0.0, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
 	
-	this.doors.push(new Door(vec3(10.0, 0.0, 11.0), "H", "door1"));
-	this.doors.push(new Door(vec3(12.0, 0.0, 10.0), "V", "door1"));
+	this.doors.push(new Door(this, vec3(10.0, 0.0, 11.0), "H", "door1", "goldKey"));
+	this.doors.push(new Door(this, vec3(12.0, 0.0, 10.0), "V", "door1"));
 	
 	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
 	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
-	this.instances.push(new Item(vec3(15.0,0.0,7.0), ItemFactory.getItemByCode("key", 1), this));
+	this.instances.push(new Item(vec3(15.0,0.0,7.0), ItemFactory.getItemByCode("goldKey", 1), this));
 	
 	this.getInstancesToDraw();
 };
@@ -298,6 +298,33 @@ MapManager.prototype.drawMap = function(){
 			}
 		}
 	}
+};
+
+MapManager.prototype.getPlayerItem = function(itemCode){
+	var inv = this.game.inventory.items;
+	for (var i=0,len=inv.length;i<len;i++){
+		if (inv[i].code == itemCode){
+			return inv[i];
+		}
+	}
+	
+	return null;
+};
+
+MapManager.prototype.removePlayerItem = function(itemCode, amount){
+	var inv = this.game.inventory.items;
+	for (var i=0,len=inv.length;i<len;i++){
+		var it = inv[i];
+		if (it.code == itemCode){
+			if (--it.amount == 0){
+				inv.splice(i,1);
+			}
+		}
+	}
+};
+
+MapManager.prototype.addMessage = function(text){
+	this.game.console.addSFMessage(text);
 };
 
 MapManager.prototype.step = function(){

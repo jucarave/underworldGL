@@ -13,13 +13,14 @@ function Item(position, item, mapManager){
 }
 
 Item.prototype.activate = function(){
+	var mm = this.mapManager;
 	var game = this.mapManager.game;
 	if (this.item.isItem){
 		if (game.inventory.addItem(this.item)){
-			game.console.addSFMessage(this.item.name + " picked.");
+			mm.addMessage(this.item.name + " picked.");
 			this.destroyed = true;
 		}else{
-			game.console.addSFMessage("You can't carry any more items");
+			mm.addMessage("You can't carry any more items");
 		}
 	}
 };
