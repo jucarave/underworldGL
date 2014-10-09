@@ -16,7 +16,7 @@ function MapManager(game, map){
 }
 
 MapManager.prototype.createTestMap = function(){
-	var A, B, C, D, E, F, G, H, M, N, O, P, Q, R, S;
+	var A, B, C, D, E, F, G, H, M, N, O, P, Q, R, S, T;
 	// Walls
 	A = {w: 3, y: -1, h: 3};
 	B = {w: 3, y: 0, h: 2};
@@ -36,6 +36,8 @@ MapManager.prototype.createTestMap = function(){
 	R = {wd: 3, f: 4, c: 7, y: 0, h: 2, ch: 2, ver: 0};
 	S = {wd: 1, f: 1, c: 7, y: 0, h: 2, ch: 2, ver: 1};
 	
+	T = {w: 8, y: 0, h: 2};
+	
 	var I, J, K, L;
 	// Floors
 	I = {f: 5, c: 7, y: -0.3, h: 2.3};
@@ -53,7 +55,7 @@ MapManager.prototype.createTestMap = function(){
 		[0,0,0,0,A,A,A,J,A,A,A,0,0,0,D,D,D,0],
 		[0,0,0,0,0,0,B,J,B,0,0,0,0,D,D,K,D,0],
 		[0,0,0,0,0,0,B,J,B,0,0,0,D,D,K,K,D,D],
-		[0,0,0,0,0,0,B,J,B,B,B,B,D,K,K,K,K,D],
+		[0,0,0,0,0,0,B,J,B,B,B,T,D,K,K,K,K,D],
 		[0,0,0,0,0,0,B,M,J,J,J,J,S,K,N,O,K,D],
 		[0,0,0,0,0,0,B,B,B,B,R,B,D,K,Q,P,K,D],
 		[0,0,0,0,0,0,0,0,0,B,J,B,D,K,K,K,K,D],
@@ -74,6 +76,8 @@ MapManager.prototype.createTestMap = function(){
 	
 	this.doors.push(new Door(this, vec3(10.0, 0.0, 11.0), "H", "door1", "goldKey"));
 	this.doors.push(new Door(this, vec3(12.0, 0.0, 10.0), "V", "door1"));
+	
+	this.instances.push(new Billboard(vec3(11.0,0.0,9.0), "none", this, {ac: ["cw_9"]}));
 	
 	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
 	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
@@ -97,6 +101,25 @@ MapManager.prototype.isWaterPosition = function(x, z){
 	if (!t.f) return false;
 	
 	return this.isWaterTile(t.f);
+};
+
+MapManager.prototype.changeWallTexture = function(x, z, textureId){
+	if (!this.map[z]) return false;
+	if (this.map[z][x] === undefined) return false;
+	else if (this.map[z][x] === 0) return false;
+	
+	var base = this.map[z][x];
+	if (!base.cloned){
+		var newW = {};
+		for (var i in base){
+			newW[i] = base[i];
+		}
+		newW.cloned = true;
+		this.map[z][x] = newW;
+		base = newW;
+	}
+	
+	base.w = textureId;
 };
 
 MapManager.prototype.getDoorAt = function(x, y, z){

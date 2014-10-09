@@ -14,6 +14,7 @@ function Billboard(position, textureCode, mapManager, params){
 	this.circleFrameIndex = 0;
 	
 	if (params) this.parseParams(params);
+	if (textureCode == "none") this.visible = false;
 }
 
 Billboard.prototype.parseParams = function(params){
@@ -50,6 +51,9 @@ Billboard.prototype.activate = function(){
 			var frames = ac.replace("cf_","").split(",");
 			this.imgInd = parseInt(frames[this.circleFrameIndex], 10);
 			if (this.circleFrameIndex++ >= frames.length-1) this.circleFrameIndex = 0;
+		}else if (ac.indexOf("cw_") == 0){ // Circle frames
+			var textureId = parseInt(ac.replace("cw_",""), 10);
+			this.mapManager.changeWallTexture(this.position.a, this.position.c, textureId);
 		}
 	}
 };
