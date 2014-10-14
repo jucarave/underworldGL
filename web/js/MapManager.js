@@ -75,9 +75,9 @@ MapManager.prototype.createTestMap = function(){
 	this.player = new Player(vec3(7.5, 0.0, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
 	
 	this.doors.push(new Door(this, vec3(10.0, 0.0, 11.0), "H", "door1", "goldKey"));
-	this.doors.push(new Door(this, vec3(12.0, 0.0, 10.0), "V", "door1"));
+	this.doors.push(new Door(this, vec3(12.0, 0.0, 10.0), "V", "door1", "noKey"));
 	
-	this.instances.push(new Billboard(vec3(11.0,0.0,9.0), "none", this, {ac: ["cw_9"]}));
+	this.instances.push(new Billboard(vec3(11.0,0.0,9.0), "none", this, {ac: ["cw_9", "ud_12,0,10", "destroy"]}));
 	
 	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
 	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
@@ -405,10 +405,16 @@ MapManager.prototype.loop = function(){
 	for (var i=0,len=this.doors.length;i<len;i++){
 		var ins = this.doors[i];
 		
+		if (!ins) continue;
 		var xx = Math.abs(ins.position.a - this.player.position.a);
 		var zz = Math.abs(ins.position.z - this.player.position.z);
 		
 		if (xx > 6 || zz > 6) continue;
+		
+		if (ins.destroyed){
+			this.doors.splice(i--,1);
+			continue;
+		}
 		
 		ins.loop();
 		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.rotation, ins.textureCode);

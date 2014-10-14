@@ -10,6 +10,7 @@ function Billboard(position, textureCode, mapManager, params){
 	this.imgInd = 0;
 	this.actions = null;
 	this.visible = true;
+	this.destroyed = false;
 	
 	this.circleFrameIndex = 0;
 	
@@ -54,6 +55,16 @@ Billboard.prototype.activate = function(){
 		}else if (ac.indexOf("cw_") == 0){ // Circle frames
 			var textureId = parseInt(ac.replace("cw_",""), 10);
 			this.mapManager.changeWallTexture(this.position.a, this.position.c, textureId);
+		}else if (ac.indexOf("ud_") == 0){ // Unlock door
+			var pos = ac.replace("ud_", "").split(",");
+			var door = this.mapManager.getDoorAt(parseInt(pos[0], 10), parseInt(pos[1], 10), parseInt(pos[2], 10));
+			if (door){ 
+				door.lock = null;
+				door.activate();
+			}
+		}else if (ac == "destroy"){ // Destroy the billboard
+			this.destroyed = true;
+			this.visible = false;
 		}
 	}
 };
