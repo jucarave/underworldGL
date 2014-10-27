@@ -23,6 +23,7 @@
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Console.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Inventory.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Item.js<?php echo $ver; ?>"></script>
+		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Enemy.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/ItemFactory.js<?php echo $ver; ?>"></script>
 		
 		<script type="text/javascript">

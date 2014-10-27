@@ -79,8 +79,10 @@ Underworld.prototype.loadTextures = function(){
 	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
 	this.objectTex.lamp1Off = this.GL.loadImage(cp + "img/texLamp1_off.png?version=" + version, true);
 	this.objectTex.lamp1 = this.GL.loadImage(cp + "img/texLamp1.png?version=" + version, true);
-	this.objectTex.gargoyle = this.GL.loadImage(cp + "img/gargoyleStandF.png?version=" + version, true);
 	this.objectTex.items = this.GL.loadImage(cp + "img/texItems.png?version=" + version, true, {imgNum: 1, imgVNum: 1});
+	
+	// Enemies
+	this.objectTex.gargoyle_run = this.GL.loadImage(cp + "img/gargoyleRun.png?version=" + version, true);
 };
 
 Underworld.prototype.stopMusic = function(){
