@@ -8,7 +8,7 @@ function Player(position, direction, mapManager){
 	this.cameraHeight = 0.5;
 	this.maxVertRotation = Math.degToRad(45);
 	
-	this.targetY = 0.0;
+	this.targetY = position.b;
 	this.ySpeed = 0.0;
 	this.yGravity = 0.0;
 	
@@ -115,7 +115,8 @@ Player.prototype.checkAction = function(){
 Player.prototype.doVerticalChecks = function(){
 	var pointY = this.mapManager.getYFloor(this.position.a, this.position.c);
 	var wy = (this.onWater)? 0.3 : 0;
-	if (pointY - this.position.b - wy <= 0.3) this.targetY = pointY;
+	var py = Math.floor((pointY - (this.position.b + wy)) * 100) / 100;
+	if (py <= 0.3) this.targetY = pointY;
 	if (this.mapManager.isWaterPosition(this.position.a, this.position.c)){
 		if (this.position.b == this.targetY)
 			this.movementSpd = 0.05;

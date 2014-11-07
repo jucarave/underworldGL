@@ -35,7 +35,7 @@
 		<script id="fragmentShader" type="x-shader/x-fragment"><?php require("shaders/fragmentShader"); ?></script>
 		
 		<style>
-			body{ background-color: black; }
+			body { background-color: black; }
 			#divGame {
 				left: 0px;
 				top: 0px;

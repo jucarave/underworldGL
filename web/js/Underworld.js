@@ -51,6 +51,8 @@ Underworld.prototype.create3DObjects = function(){
 	this.doorC = ObjectFactory.cube(vec3(1.0,1.0,0.1), vec2(1.0,1.0), this.GL.ctx, true);
 	
 	this.billboard = ObjectFactory.billboard(vec3(1.0,1.0,0.0), vec2(1.0,1.0), this.GL.ctx);
+	
+	this.slope = ObjectFactory.slope(vec3(1.0,1.0,1.0), vec2(1.0, 1.0), this.GL.ctx);
 };
 
 Underworld.prototype.loadMusic = function(){
@@ -212,6 +214,16 @@ Underworld.prototype.drawBillboard = function(position, texId, billboard){
 	
 	billboard.position.set(position);
 	game.GL.drawObject(billboard, camera, game.objectTex[texId].texture);
+};
+
+Underworld.prototype.drawSlope = function(x, y, z, texId, direction){
+	var game = this;
+	var camera = game.map.player;
+	
+	var slope = game.slope;
+	slope.position.set(x, y, z);
+	slope.rotation.set(0, -Math.PI_2 * direction, 0);
+	game.GL.drawObject(slope, camera, game.getTextureById(texId).texture);
 };
 
 Underworld.prototype.drawFPS = function(/*float*/ now){

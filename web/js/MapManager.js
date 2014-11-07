@@ -20,7 +20,7 @@ MapManager.prototype.createTestMap = function(){
 	// Walls
 	A = {w: 3, y: -1, h: 3};
 	B = {w: 3, y: 0, h: 2};
-	C = {w: 3, y: -1, h: 1, c: 7, f: 4, ch: 2};
+	C = {w: 3, y: -1.5, h: 1, c: 7, f: 4, ch: 2};
 	D = {w: 1, y: 0, h: 2};
 	E = {w: 1, y: -1, h: 1, c: 7, f: 1, ch: 2};
 	F = {w: 1, y: -1, h: 3};
@@ -38,12 +38,17 @@ MapManager.prototype.createTestMap = function(){
 	
 	T = {w: 8, y: 0, h: 2};
 	
-	var I, J, K, L;
+	var I, J, K, L, V;
 	// Floors
-	I = {f: 5, c: 7, y: -0.3, h: 2.3};
+	I = {f: 5, c: 7, y: -0.8, h: 2.8};
 	J = {f: 4, c: 7, y: 0, h: 2};
 	K = {f: 1, c: 7, y: 0, h: 2};
 	L = {f: 2, c: 2, y: 0, h: 2};
+	V = {f: 5, c: 7, y: -0.3, h: 2.3};
+	
+	var U;
+	//Slopes
+	U = {w: 3, sl: 4, y: -1.5, h: 1, c: 7, ch: 2, dir: 0};
 	
 	this.map = [
 		[0,0,0,0,A,A,A,A,A,A,A,0,0,0,0,0,0,0],
@@ -51,7 +56,7 @@ MapManager.prototype.createTestMap = function(){
 		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
 		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
 		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
+		[0,0,0,0,A,I,I,U,I,I,A,0,0,0,0,0,0,0],
 		[0,0,0,0,A,A,A,J,A,A,A,0,0,0,D,D,D,0],
 		[0,0,0,0,0,0,B,J,B,0,0,0,0,D,D,K,D,0],
 		[0,0,0,0,0,0,B,J,B,0,0,0,D,D,K,K,D,D],
@@ -62,9 +67,9 @@ MapManager.prototype.createTestMap = function(){
 		[0,0,0,0,0,0,0,0,0,B,J,B,D,D,D,D,D,D],
 		[0,0,0,0,0,0,D,D,D,B,J,B,D,D,D,0,0,0],
 		[0,0,0,0,0,0,D,E,E,E,E,E,E,E,D,0,0,0],
-		[0,0,F,F,F,F,F,I,I,I,I,I,I,I,F,0,0,0],
-		[0,0,F,I,I,I,I,I,I,I,I,I,I,I,F,0,0,0],
-		[H,H,F,G,F,F,F,I,I,I,I,I,I,I,F,0,0,0],
+		[0,0,F,F,F,F,F,V,V,V,V,V,V,V,F,0,0,0],
+		[0,0,F,V,V,V,V,V,V,V,V,V,V,V,F,0,0,0],
+		[H,H,F,G,F,F,F,V,V,V,V,V,V,V,F,0,0,0],
 		[H,L,L,L,H,H,D,E,E,E,E,E,E,E,D,0,0,0],
 		[H,L,L,L,L,H,D,D,D,D,D,D,D,D,D,0,0,0],
 		[H,L,L,L,L,H,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -72,15 +77,15 @@ MapManager.prototype.createTestMap = function(){
 	];
 	
 	this.waterTiles = [5];
-	this.player = new Player(vec3(7.5, 0.0, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
+	this.player = new Player(vec3(7.5, -0.5, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
 	
 	this.doors.push(new Door(this, vec3(10.0, 0.0, 11.0), "H", "door1", "goldKey"));
 	this.doors.push(new Door(this, vec3(12.0, 0.0, 10.0), "V", "door1", "noKey"));
 	
 	this.instances.push(new Billboard(vec3(11.0,0.0,9.0), "none", this, {ac: ["cw_9", "ud_12,0,10", "destroy"]}));
 	
-	this.instances.push(new Billboard(vec3(6.0,0.0,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
-	this.instances.push(new Billboard(vec3(8.0,0.0,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
+	this.instances.push(new Billboard(vec3(6.0,-0.5,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
+	this.instances.push(new Billboard(vec3(8.0,-0.5,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
 	this.instances.push(new Enemy(vec3(10.0,0.0,17.0), "gargoyle", this));
 	this.instances.push(new Item(vec3(15.0,0.0,7.0), ItemFactory.getItemByCode("goldKey", 1), this));
 	
@@ -145,7 +150,7 @@ MapManager.prototype.getInstanceAt = function(position){
 MapManager.prototype.getInstanceNormal = function(pos, spd){
 	var p = pos.clone();
 	p.a = ((p.a + spd.a) << 0);
-	p.b = (p.b << 0);
+	p.b = (p.b);
 	p.c = ((p.c + spd.b) << 0);
 	
 	var ins = this.getInstanceAt(p);
@@ -220,6 +225,8 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 };
 
 MapManager.prototype.getYFloor = function(x, y){
+	var xx = x - (x << 0);
+	var yy = y - (y << 0);
 	x = x << 0;
 	y = y << 0;
 	if (!this.map[y]) return 0;
@@ -231,6 +238,13 @@ MapManager.prototype.getYFloor = function(x, y){
 	
 	if (t.w) tt += t.h;
 	if (this.isWaterTile(t.f)) tt -= 0.3;
+	
+	if (t.sl){
+		if (t.dir == 0) tt += yy * 0.5; else
+		if (t.dir == 1) tt += xx * 0.5; else
+		if (t.dir == 2) tt += (1.0 - yy) * 0.5; else
+		if (t.dir == 3) tt += (1.0 - xx) * 0.5;
+	}
 	
 	return tt;
 };
@@ -305,6 +319,11 @@ MapManager.prototype.drawMap = function(){
 					else 
 						this.game.drawDoorCube(j, wy, i, t.wd, t.ver);
 				}
+			}
+			
+			// Draw Slope
+			if (t.sl){
+				this.game.drawSlope(j, fy, i, t.sl, t.dir);
 			}
 			
 			// Draw floor
