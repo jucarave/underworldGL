@@ -27,7 +27,7 @@ function Underworld(){
 	this.mouse = vec3(0.0, 0.0, 0);
 	this.images = {};
 	this.music = {};
-	this.textures = [];
+	this.textures = {wall: [], floor: [], ceil: []};
 	this.objectTex = {};
 	
 	this.fps = (1000 / 30) << 0;
@@ -67,16 +67,15 @@ Underworld.prototype.loadImages = function(){
 };
 
 Underworld.prototype.loadTextures = function(){
-	this.textures = [null];
-	this.textures.push(this.GL.loadImage(cp + "img/texWall1.png?version=" + version, true, 1, true));
-	this.textures.push(this.GL.loadImage(cp + "img/texWall2.png?version=" + version, true, 2, true));
-	this.textures.push(this.GL.loadImage(cp + "img/texWall3.png?version=" + version, true, 3, true));
-	this.textures.push(this.GL.loadImage(cp + "img/texFloor1.png?version=" + version, true, 4));
-	this.textures.push(this.GL.loadImage(cp + "img/texWater1_0.png?version=" + version, true, 5));
-	this.textures.push(this.GL.loadImage(cp + "img/texWater1_1.png?version=" + version, true, 6));
-	this.textures.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 7));
-	this.textures.push(this.GL.loadImage(cp + "img/texWall3_sw1.png?version=" + version, true, 8, true));
-	this.textures.push(this.GL.loadImage(cp + "img/texWall3_sw2.png?version=" + version, true, 9, true));
+	this.textures = {wall: [null], floor: [null], ceil: [null]};
+	this.textures.wall.push(this.GL.loadImage(cp + "img/texWCrypt.png?version=" + version, true, 1, true));
+	this.textures.wall.push(this.GL.loadImage(cp + "img/texWCave.png?version=" + version, true, 2, true));
+	this.textures.wall.push(this.GL.loadImage(cp + "img/texWall2.png?version=" + version, true, 3, true));
+	this.textures.floor.push(this.GL.loadImage(cp + "img/texFCrypt.png?version=" + version, true, 1));
+	this.textures.floor.push(this.GL.loadImage(cp + "img/texFCave.png?version=" + version, true, 2));
+	this.textures.floor.push(this.GL.loadImage(cp + "img/texWater1_0.png?version=" + version, true, 30));
+	this.textures.floor.push(this.GL.loadImage(cp + "img/texWater1_1.png?version=" + version, true, 31));
+	this.textures.ceil.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 1));
 	
 	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
 	this.objectTex.lamp1Off = this.GL.loadImage(cp + "img/texLamp1_off.png?version=" + version, true);
@@ -112,10 +111,10 @@ Underworld.prototype.getUI = function(){
 	return this.UI.ctx;
 };
 
-Underworld.prototype.getTextureById = function(textureId){
-	if (!this.textures[textureId]) throw "Invalid textureId: " + textureId;
+Underworld.prototype.getTextureById = function(textureId, type){
+	if (!this.textures[type][textureId]) throw "Invalid textureId: " + textureId;
 	
-	return this.textures[textureId];
+	return this.textures[type][textureId];
 };
 
 Underworld.prototype.getObjectTexture = function(textureCode){
@@ -158,7 +157,7 @@ Underworld.prototype.drawBlock = function(x, y, z, texId){
 	var camera = game.map.player;
 	
 	game.cube.position.set(x, y, z);
-	game.GL.drawObject(game.cube, camera, game.getTextureById(texId).texture);
+	game.GL.drawObject(game.cube, camera, game.getTextureById(texId, "wall").texture);
 };
 
 Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle){
@@ -168,7 +167,7 @@ Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle){
 	
 	game.aWall.position.set(x, y, z);
 	game.aWall.rotation.set(0, angle, 0);
-	game.GL.drawObject(game.aWall, camera, game.getTextureById(texId).texture);
+	game.GL.drawObject(game.aWall, camera, game.getTextureById(texId, "wall").texture);
 };
 
 Underworld.prototype.drawDoorWall = function(x, y, z, texId, vertical){
@@ -177,7 +176,7 @@ Underworld.prototype.drawDoorWall = function(x, y, z, texId, vertical){
 	
 	game.doorW.position.set(x, y, z);
 	if (vertical) game.doorW.rotation.set(0,Math.PI_2,0); else game.doorW.rotation.set(0,0,0);
-	game.GL.drawObject(game.doorW, camera, game.getTextureById(texId).texture);
+	game.GL.drawObject(game.doorW, camera, game.getTextureById(texId, "wall").texture);
 };
 
 Underworld.prototype.drawDoorCube = function(x, y, z, texId, vertical){
@@ -186,7 +185,7 @@ Underworld.prototype.drawDoorCube = function(x, y, z, texId, vertical){
 	
 	game.doorC.position.set(x, y, z);
 	if (vertical) game.doorC.rotation.set(0,Math.PI_2,0); else game.doorC.rotation.set(0,0,0);
-	game.GL.drawObject(game.doorC, camera, game.getTextureById(texId).texture);
+	game.GL.drawObject(game.doorC, camera, game.getTextureById(texId, "wall").texture);
 };
 
 Underworld.prototype.drawDoor = function(x, y, z, rotation, texId){
@@ -203,8 +202,9 @@ Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
 	var camera = game.map.player;
 	
 	var floor = (ceil)? game.ceil : game.floor;
+	var ft = (ceil)? "ceil" : "floor";
 	floor.position.set(x, y, z);
-	game.GL.drawObject(floor, camera, game.getTextureById(texId).texture);
+	game.GL.drawObject(floor, camera, game.getTextureById(texId, ft).texture);
 };
 
 Underworld.prototype.drawBillboard = function(position, texId, billboard){
@@ -223,7 +223,7 @@ Underworld.prototype.drawSlope = function(x, y, z, texId, direction){
 	var slope = game.slope;
 	slope.position.set(x, y, z);
 	slope.rotation.set(0, -Math.PI_2 * direction, 0);
-	game.GL.drawObject(slope, camera, game.getTextureById(texId).texture);
+	game.GL.drawObject(slope, camera, game.getTextureById(texId, "floor").texture);
 };
 
 Underworld.prototype.drawFPS = function(/*float*/ now){

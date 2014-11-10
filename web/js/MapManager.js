@@ -11,9 +11,42 @@ function MapManager(game, map){
 	this.doors = [];
 	
 	if (map == "test"){
-		this.createTestMap();
+		this.loadMap("testMap");
 	}
 }
+
+
+MapManager.prototype.loadMap = function(mapName){
+	var mapM = this;
+	var http = getHttp();
+	http.open('GET', 'maps/' + mapName + ".json", true);
+	http.onreadystatechange = function() {
+  		if (http.readyState == 4 && http.status == 200) {
+  			try{
+				mapData = JSON.parse(http.responseText);
+				for (var y=0,len=mapData.map.length;y<len;y++){
+					for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
+						if (mapData.map[y][x] != 0){
+							mapData.map[y][x] = mapData.tiles[mapData.map[y][x]];
+						}
+					}
+				}
+				
+				mapM.map = mapData.map;
+				
+				mapM.waterTiles = [5];
+				mapM.player = new Player(vec3(10.5, 0.0, 5.5), vec3(0.0, Math.PI3_2, 0.0), mapM);
+				
+				mapM.getInstancesToDraw();
+			}catch (e){
+				mapM.map = null;
+			}
+			
+		}
+	};
+	http.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	http.send();
+};
 
 MapManager.prototype.createTestMap = function(){
 	var A, B, C, D, E, F, G, H, M, N, O, P, Q, R, S, T;
@@ -180,7 +213,7 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 	else if (t.y > y + h) return null;
 	
 	if (t.w){
-		var tex = this.game.getTextureById(t.w);
+		var tex = this.game.getTextureById(t.w, "wall");
 		if (tex.isSolid){
 			var xxx = pos.a - xx;
 			var zzz = pos.c - zz;
@@ -303,15 +336,15 @@ MapManager.prototype.drawMap = function(){
 			var cy = t.y + t.h;
 			
 			// Draw wall
-			if (t.w){ 
+			if (t.w > 0){ 
 				for (var wy=fy;wy<cy;wy++) this.game.drawBlock(j, wy, i, t.w);
 				
 				fy = fy + t.h;
 				cy = cy + t.h;
-			}else if (t.dw){
+			}else if (t.dw > 0){
 				// Draw angled 
 				for (var wy=fy;wy<cy;wy++) this.game.drawAngledWall(j, wy, i, t.dw, t.aw);
-			}else if (t.wd){
+			}else if (t.wd > 0){
 				// Wall Door 
 				for (var wy=fy;wy<cy;wy++){ 
 					if (wy == fy)
@@ -402,6 +435,8 @@ MapManager.prototype.getInstancesToDraw = function(){
 };
 
 MapManager.prototype.loop = function(){
+	if (this.map == null) return;
+	
 	this.step();
 	
 	this.drawMap();
