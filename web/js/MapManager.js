@@ -32,11 +32,22 @@ MapManager.prototype.loadMap = function(mapName){
 					}
 				}
 				
+				for (var i=0,len=mapData.objects.length;i<len;i++){
+					var o = mapData.objects[i];
+					var x = o.x + 0.5;
+					var y = o.y;
+					var z = o.z + 0.5;
+					
+					switch (o.type){
+						case "player":
+							mapM.player = new Player(vec3(x, y, z), vec3(0.0, o.dir * Math.PI_2, 0.0), mapM);
+						break;
+					}
+				}
+				
 				mapM.map = mapData.map;
 				
-				mapM.waterTiles = [5];
-				mapM.player = new Player(vec3(10.5, 0.0, 5.5), vec3(0.0, Math.PI3_2, 0.0), mapM);
-				
+				mapM.waterTiles = [30];
 				mapM.getInstancesToDraw();
 			}catch (e){
 				mapM.map = null;

@@ -90,6 +90,34 @@
          "width":64,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "height":64,
+         "name":"Objects",
+         "objects":[
+                {
+                 "gid":33,
+                 "height":0,
+                 "name":"Player",
+                 "properties":
+                    {
+                     "direction":"1",
+                     "z":"0"
+                    },
+                 "rotation":0,
+                 "type":"player",
+                 "visible":true,
+                 "width":0,
+                 "x":272,
+                 "y":416
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "width":64,
+         "x":0,
+         "y":0
         }],
  "orientation":"orthogonal",
  "properties":
@@ -112,6 +140,29 @@
             },
          "spacing":0,
          "tileheight":16,
+         "tilewidth":16,
+         "transparentcolor":"#ff00ff"
+        }, 
+        {
+         "firstgid":33,
+         "image":"..\/aseprite-0.9.5-win32\/tiledObjects.png",
+         "imageheight":64,
+         "imagewidth":64,
+         "margin":0,
+         "name":"tiledObjects",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":16,
+         "tileproperties":
+            {
+             "0":
+                {
+                 "direction":""
+                }
+            },
          "tilewidth":16,
          "transparentcolor":"#ff00ff"
         }],
