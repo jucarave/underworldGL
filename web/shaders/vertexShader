@@ -9,6 +9,7 @@ varying mediump vec2 vTextureCoord;
 varying mediump float vVertexIsDark;
 varying mediump float vVertexDepth;
 
+
 void main(void){
 	gl_Position = uPerspectiveMatrix * uTransformationMatrix * vec4(aVertexPosition, 1.0);
 	vTextureCoord = aTextureCoord;

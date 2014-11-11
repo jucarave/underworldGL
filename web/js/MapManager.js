@@ -27,7 +27,11 @@ MapManager.prototype.loadMap = function(mapName){
 				for (var y=0,len=mapData.map.length;y<len;y++){
 					for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
 						if (mapData.map[y][x] != 0){
-							mapData.map[y][x] = mapData.tiles[mapData.map[y][x]];
+							var tile = mapData.tiles[mapData.map[y][x]];
+							mapData.map[y][x] = tile;
+							
+							if (tile.w && !tile.object) tile.object = ObjectFactory.cube(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);
+							else if (tile.dw && !tile.object) tile.object = ObjectFactory.angledWall(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);
 						}
 					}
 				}
@@ -348,13 +352,13 @@ MapManager.prototype.drawMap = function(){
 			
 			// Draw wall
 			if (t.w > 0){ 
-				for (var wy=fy;wy<cy;wy++) this.game.drawBlock(j, wy, i, t.w);
+				this.game.drawBlock(j, fy, i, t.w, t.object);
 				
 				fy = fy + t.h;
 				cy = cy + t.h;
 			}else if (t.dw > 0){
 				// Draw angled 
-				for (var wy=fy;wy<cy;wy++) this.game.drawAngledWall(j, wy, i, t.dw, t.aw);
+				this.game.drawAngledWall(j, fy, i, t.dw, t.aw, t.object);
 			}else if (t.wd > 0){
 				// Wall Door 
 				for (var wy=fy;wy<cy;wy++){ 
@@ -374,14 +378,14 @@ MapManager.prototype.drawMap = function(){
 			if (t.f){
 				var tt = t.f;
 				if (this.isWaterTile(tt)) tt = tt + (this.waterFrame << 0);
-				this.game.drawFloor(j, -0.5 + fy, i, tt, false);
+				this.game.drawFloor(j, 0.0 + fy, i, tt, false);
 			}
 			
 			// Draw ceil
 			if (t.c){
 				if (t.ch) cy = t.ch;
 				var tt = t.c;
-				this.game.drawFloor(j, -0.5 + cy, i, tt, true);
+				this.game.drawFloor(j, 0.0 + cy, i, tt, true);
 			}
 		}
 	}

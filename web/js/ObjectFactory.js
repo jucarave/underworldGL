@@ -14,7 +14,7 @@ var ObjectFactory = {
 	angledWall: function(size, texRepeat, gl){
 		var vertex, indices, texCoords, darkVertex;
 		var w = size.a / 2;
-		var h = size.b / 2;
+		var h = size.b;
 		var l = size.c / 2;
 		
 		var tx = texRepeat.a;
@@ -23,21 +23,21 @@ var ObjectFactory = {
 		vertex = [
 			// Front Face
 			 w,  h, -l,
-			 w, -h, -l,
+			 w,  0, -l,
 			-w,  h,  l,
-			-w, -h,  l,
+			-w,  0,  l,
 			
 			// Back Face
 			-w,  h,  l,
-			-w, -h,  l,
+			-w,  0,  l,
 			 w,  h,  l,
-			 w, -h,  l,
+			 w,  0,  l,
 			 
 			// Right Face
 			 w,  h,  l,
-			 w, -h,  l,
+			 w,  0,  l,
 			 w,  h, -l,
-			 w, -h, -l
+			 w,  0, -l
 		];
 		
 		indices = [];
@@ -93,7 +93,7 @@ var ObjectFactory = {
 	cube: function(size, texRepeat, gl, light){
 		var vertex, indices, texCoords, darkVertex;
 		var w = size.a / 2;
-		var h = size.b / 2;
+		var h = size.b;
 		var l = size.c / 2;
 		
 		var tx = texRepeat.a;
@@ -102,27 +102,27 @@ var ObjectFactory = {
 		vertex = [
 			// Front Face
 			 w,  h, -l,
-			 w, -h, -l,
+			 w,  0, -l,
 			-w,  h, -l,
-			-w, -h, -l,
+			-w,  0, -l,
 			
 			// Back Face
 			-w,  h,  l,
-			-w, -h,  l,
+			-w,  0,  l,
 			 w,  h,  l,
-			 w, -h,  l,
+			 w,  0,  l,
 			 
 			// Right Face
 			 w,  h,  l,
-			 w, -h,  l,
+			 w,  0,  l,
 			 w,  h, -l,
-			 w, -h, -l,
+			 w,  0, -l,
 			 
 			// Left Face
 			-w,  h, -l,
-			-w, -h, -l,
+			-w,  0, -l,
 			-w,  h,  l,
-			-w, -h,  l,
+			-w,  0,  l,
 		];
 		
 		indices = [];
@@ -296,7 +296,7 @@ var ObjectFactory = {
 	doorWall: function(size, texRepeat, gl){
 		var vertex, indices, texCoords, darkVertex;
 		var w = size.a / 2;
-		var h = size.b / 2;
+		var h = size.b;
 		var l = size.c * 0.05;
 		
 		var w2 = -size.a * 0.25;
@@ -311,40 +311,40 @@ var ObjectFactory = {
 			// Right part of the door
 			// Front Face
 			w2,  h, -l,
-			w2, -h, -l,
+			w2,  0, -l,
 			-w,  h, -l,
-			-w, -h, -l,
+			-w,  0, -l,
 			
 			// Back Face
 			-w,  h,  l,
-			-w, -h,  l,
+			-w,  0,  l,
 			w2,  h,  l,
-			w2, -h,  l,
+			w2,  0,  l,
 			 
 			// Right Face
 			w2,  h,  l,
-			w2, -h,  l,
+			w2,  0,  l,
 			w2,  h, -l,
-			w2, -h, -l,
+			w2,  0, -l,
 			
 			// Left part of the door
 			// Front Face
 			 w,  h, -l,
-			 w, -h, -l,
+			 w,  0, -l,
 			w3,  h, -l,
-			w3, -h, -l,
+			w3,  0, -l,
 			
 			// Back Face
 			w3,  h,  l,
-			w3, -h,  l,
+			w3,  0,  l,
 			 w,  h,  l,
-			 w, -h,  l,
+			 w,  0,  l,
 			 
 			// Left Face
 			w3,  h, -l,
-			w3, -h, -l,
+			w3,  0, -l,
 			w3,  h,  l,
-			w3, -h,  l,
+			w3,  0,  l,
 			
 			// Middle part of the door
 			// Front Face
@@ -515,7 +515,7 @@ var ObjectFactory = {
 	billboard: function(size, texRepeat, gl){
 		var vertex, indices, texCoords, darkVertex;
 		var w = size.a / 2;
-		var h = size.b / 2;
+		var h = size.b;
 		var l = size.c / 2;
 		
 		var tx = texRepeat.a;
@@ -524,8 +524,8 @@ var ObjectFactory = {
 		vertex = [
 			 w,  h,  0,
 			-w,  h,  0,
-			 w, -h,  0,
-			-w, -h,  0,
+			 w,  0,  0,
+			-w,  0,  0,
 		];
 		
 		indices = [];
@@ -586,20 +586,20 @@ var ObjectFactory = {
 		
 		vertex = [
 			 // Front Slope
-			 w,  0.0,  l,
-			 w, -0.5, -l,
-			-w,  0.0,  l,
-			-w, -0.5, -l,
+			 w,  0.5,  l,
+			 w,  0.0, -l,
+			-w,  0.5,  l,
+			-w,  0.0, -l,
 			
 			 // Right Side
+			 w,  0.5,  l,
 			 w,  0.0,  l,
-			 w, -0.5,  l,
-			 w, -0.5, -l,
+			 w,  0.0, -l,
 			 
 			 // Left Side
-			-w,  0.0,  l,
-			-w, -0.5, -l,
-			-w, -0.5,  l
+			-w,  0.5,  l,
+			-w,  0.0, -l,
+			-w,  0.0,  l
 		];
 		
 		indices = [];

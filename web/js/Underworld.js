@@ -152,22 +152,24 @@ Underworld.prototype.loadGame = function(){
 	}
 };
 
-Underworld.prototype.drawBlock = function(x, y, z, texId){
+Underworld.prototype.drawBlock = function(x, y, z, texId, customBlock){
 	var game = this;
 	var camera = game.map.player;
 	
-	game.cube.position.set(x, y, z);
-	game.GL.drawObject(game.cube, camera, game.getTextureById(texId, "wall").texture);
+	var cube = (customBlock)? customBlock : game.cube;
+	cube.position.set(x, y, z);
+	game.GL.drawObject(cube, camera, game.getTextureById(texId, "wall").texture);
 };
 
-Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle){
+Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle, customBlock){
 	var game = this;
 	var camera = game.map.player;
 	angle = Math.degToRad(90 * angle);
 	
-	game.aWall.position.set(x, y, z);
-	game.aWall.rotation.set(0, angle, 0);
-	game.GL.drawObject(game.aWall, camera, game.getTextureById(texId, "wall").texture);
+	var aWall = (customBlock)? customBlock : game.aWall;
+	aWall.position.set(x, y, z);
+	aWall.rotation.set(0, angle, 0);
+	game.GL.drawObject(aWall, camera, game.getTextureById(texId, "wall").texture);
 };
 
 Underworld.prototype.drawDoorWall = function(x, y, z, texId, vertical){
