@@ -67,6 +67,7 @@
 			$bu_dir = 0;	// Direction of slope
 			
 			$noTile = true;
+			$mdtY = false;
 			foreach ($layers as $l){
 				if (isset($l->{"data"})){
 					$data = $l->{"data"};
@@ -89,35 +90,16 @@
 							$bu_dir = $typeof - 7;
 						}else if ($typeof == 11){ // Ceil tile
 							$bu_c = floor($t / 16) + 1;
+						}else if ($typeof == 12){ // Water tile
+							$bu_f = floor($t / 16) + 101;
 						}
 						
-						if (isset($properties->{"y"})) $bu_y = (real)$properties->{"y"};
+						if (isset($properties->{"y"})){
+							if (!$mdtY) $bu_y = (real)$properties->{"y"};
+							if ($typeof == 1) $mdtY = true;
+						}
 						if (isset($properties->{"height"})) $bu_h = (real)$properties->{"height"};
 						if (isset($properties->{"ceil_y"})) $bu_ch = (real)$properties->{"ceil_y"};
-					}
-				}else if (isset($l->{"objects"})){
-					$objects = $l->{"objects"};
-					foreach ($objects as $o){
-						$o_x = floor(((real)$o->{"x"}) / 16);
-						$o_y = floor(((real)$o->{"y"}) / 16);
-						
-						$obj = new stdClass();
-						$obj->{"x"} = $o_x;
-						$obj->{"z"} = $o_y - 1;
-						
-						$properties = $o->{"properties"};
-						$type = $o->{"type"};
-						
-						$obj->{"y"} = (isset($properties->{"z"}))? (real)$properties->{"z"} : 0;
-						switch ($type){
-							case "player":
-								$o_dir = (real)$properties->{"direction"};
-								
-								$obj->{"dir"} = $o_dir;
-								$obj->{"type"} = "player";
-								$globObjects[sizeof($globObjects)] = $obj;
-							break;
-						}
 					}
 				}
 			}
@@ -125,6 +107,34 @@
 			if (!$noTile){
 				$ind = createTile($bu_w, $bu_y, $bu_h, $bu_c, $bu_f, $bu_ch, $bu_dw, $bu_aw, $bu_sl, $bu_dir);
 				$rMap[$y][$x] = $ind;
+			}
+		}
+	}
+
+	foreach ($layers as $l){
+		if (isset($l->{"objects"})){
+			$objects = $l->{"objects"};
+			foreach ($objects as $o){
+				$o_x = floor(((real)$o->{"x"}) / 16);
+				$o_y = floor(((real)$o->{"y"}) / 16);
+				
+				$obj = new stdClass();
+				$obj->{"x"} = $o_x;
+				$obj->{"z"} = $o_y - 1;
+				
+				$properties = $o->{"properties"};
+				$type = $o->{"type"};
+				
+				$obj->{"y"} = (isset($properties->{"z"}))? (real)$properties->{"z"} : 0;
+				switch ($type){
+					case "player":
+						$o_dir = (real)$properties->{"direction"};
+						
+						$obj->{"dir"} = $o_dir;
+						$obj->{"type"} = "player";
+						$globObjects[sizeof($globObjects)] = $obj;
+					break;
+				}
 			}
 		}
 	}

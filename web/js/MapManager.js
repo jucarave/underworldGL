@@ -30,6 +30,11 @@ MapManager.prototype.loadMap = function(mapName){
 							var tile = mapData.tiles[mapData.map[y][x]];
 							mapData.map[y][x] = tile;
 							
+							if (tile.f && tile.f > 100){
+								tile.rf = tile.f - 100;
+								tile.isWater = true;
+							}
+							
 							if (tile.w && !tile.object) tile.object = ObjectFactory.cube(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);
 							else if (tile.dw && !tile.object) tile.object = ObjectFactory.angledWall(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);
 						}
@@ -51,7 +56,7 @@ MapManager.prototype.loadMap = function(mapName){
 				
 				mapM.map = mapData.map;
 				
-				mapM.waterTiles = [30];
+				mapM.waterTiles = [101];
 				mapM.getInstancesToDraw();
 			}catch (e){
 				mapM.map = null;
@@ -377,15 +382,19 @@ MapManager.prototype.drawMap = function(){
 			// Draw floor
 			if (t.f){
 				var tt = t.f;
-				if (this.isWaterTile(tt)) tt = tt + (this.waterFrame << 0);
-				this.game.drawFloor(j, 0.0 + fy, i, tt, false);
+				if (this.isWaterTile(tt)){ 
+					tt = (t.rf) + (this.waterFrame << 0);
+					this.game.drawFloor(j, 0.0 + fy, i, tt, 'water');
+				}else{
+					this.game.drawFloor(j, 0.0 + fy, i, tt, 'floor');
+				}
 			}
 			
 			// Draw ceil
 			if (t.c){
 				if (t.ch) cy = t.ch;
 				var tt = t.c;
-				this.game.drawFloor(j, 0.0 + cy, i, tt, true);
+				this.game.drawFloor(j, 0.0 + cy, i, tt, 'ceil');
 			}
 		}
 	}

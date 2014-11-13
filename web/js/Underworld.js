@@ -67,14 +67,22 @@ Underworld.prototype.loadImages = function(){
 };
 
 Underworld.prototype.loadTextures = function(){
-	this.textures = {wall: [null], floor: [null], ceil: [null]};
+	this.textures = {wall: [null], floor: [null], ceil: [null], water: [null]};
+	
+	// Wall textures
 	this.textures.wall.push(this.GL.loadImage(cp + "img/texWCrypt.png?version=" + version, true, 1, true));
 	this.textures.wall.push(this.GL.loadImage(cp + "img/texWCave.png?version=" + version, true, 2, true));
 	this.textures.wall.push(this.GL.loadImage(cp + "img/texWall2.png?version=" + version, true, 3, true));
+	
+	// Floor textures
 	this.textures.floor.push(this.GL.loadImage(cp + "img/texFCrypt.png?version=" + version, true, 1));
 	this.textures.floor.push(this.GL.loadImage(cp + "img/texFCave.png?version=" + version, true, 2));
-	this.textures.floor.push(this.GL.loadImage(cp + "img/texWater1_0.png?version=" + version, true, 30));
-	this.textures.floor.push(this.GL.loadImage(cp + "img/texWater1_1.png?version=" + version, true, 31));
+	
+	// Water textures
+	this.textures.water.push(this.GL.loadImage(cp + "img/texWater1_0.png?version=" + version, true, 1));
+	this.textures.water.push(this.GL.loadImage(cp + "img/texWater1_1.png?version=" + version, true, 2));
+	
+	// Ceiling textures
 	this.textures.ceil.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 1));
 	
 	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
@@ -199,12 +207,12 @@ Underworld.prototype.drawDoor = function(x, y, z, rotation, texId){
 	game.GL.drawObject(game.door, camera, game.objectTex[texId].texture);
 };
 
-Underworld.prototype.drawFloor = function(x, y, z, texId, ceil){
+Underworld.prototype.drawFloor = function(x, y, z, texId, typeOf){
 	var game = this;
 	var camera = game.map.player;
 	
-	var floor = (ceil)? game.ceil : game.floor;
-	var ft = (ceil)? "ceil" : "floor";
+	var floor = (typeOf == 'ceil')? game.ceil : game.floor;
+	var ft = typeOf;
 	floor.position.set(x, y, z);
 	game.GL.drawObject(floor, camera, game.getTextureById(texId, ft).texture);
 };
