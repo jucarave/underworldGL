@@ -14,6 +14,7 @@
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/WebGL.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/UI.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Underworld.js<?php echo $ver; ?>"></script>
+		<script type="text/javascript" src="<?php echo $contextPath; ?>js/MapAssembler.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/MapManager.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/Player.js<?php echo $ver; ?>"></script>
 		<script type="text/javascript" src="<?php echo $contextPath; ?>js/TitleScreen.js<?php echo $ver; ?>"></script>

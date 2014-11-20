@@ -1,5 +1,5 @@
 <?php
-	$version = "A0.1";
+	$version = "A0.2";
 	$environment = "LOCAL";
 	$contextPath = "/underworldGL/web/";
 	
