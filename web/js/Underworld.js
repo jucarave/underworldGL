@@ -43,7 +43,7 @@ function Underworld(){
 Underworld.prototype.create3DObjects = function(){
 	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx, false);
 	this.aWall = ObjectFactory.angledWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
+	//this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	
 	this.door = ObjectFactory.door(vec3(0.5,0.75,0.1), vec2(1.0,1.0), this.GL.ctx, false);
@@ -72,11 +72,12 @@ Underworld.prototype.loadTextures = function(){
 	// Wall textures
 	this.textures.wall.push(this.GL.loadImage(cp + "img/texWCrypt.png?version=" + version, true, 1, true));
 	this.textures.wall.push(this.GL.loadImage(cp + "img/texWCave.png?version=" + version, true, 2, true));
-	this.textures.wall.push(this.GL.loadImage(cp + "img/texWall2.png?version=" + version, true, 3, true));
+	this.textures.wall.push(this.GL.loadImage(cp + "img/texWDirt.png?version=" + version, true, 3, true));
 	
 	// Floor textures
 	this.textures.floor.push(this.GL.loadImage(cp + "img/texFCrypt.png?version=" + version, true, 1));
 	this.textures.floor.push(this.GL.loadImage(cp + "img/texFCave.png?version=" + version, true, 2));
+	this.textures.floor.push(this.GL.loadImage(cp + "img/texFDirt.png?version=" + version, true, 3));
 	
 	// Water textures
 	this.textures.water.push(this.GL.loadImage(cp + "img/texWater1_0.png?version=" + version, true, 1));
@@ -84,6 +85,8 @@ Underworld.prototype.loadTextures = function(){
 	
 	// Ceiling textures
 	this.textures.ceil.push(this.GL.loadImage(cp + "img/texCeil1.png?version=" + version, true, 1));
+	this.textures.ceil.push(null);
+	this.textures.ceil.push(this.GL.loadImage(cp + "img/texCDirt.png?version=" + version, true, 2));
 	
 	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
 	this.objectTex.lamp1Off = this.GL.loadImage(cp + "img/texLamp1_off.png?version=" + version, true);
@@ -160,23 +163,19 @@ Underworld.prototype.loadGame = function(){
 	}
 };
 
-Underworld.prototype.drawBlock = function(x, y, z, texId, customBlock){
+Underworld.prototype.drawBlock = function(blockObject, texId){
 	var game = this;
 	var camera = game.map.player;
 	
-	var cube = (customBlock)? customBlock : game.cube;
-	cube.position.set(x, y, z);
+	var cube = blockObject;
 	game.GL.drawObject(cube, camera, game.getTextureById(texId, "wall").texture);
 };
 
-Underworld.prototype.drawAngledWall = function(x, y, z, texId, angle, customBlock){
+Underworld.prototype.drawAngledWall = function(wallObject, texId){
 	var game = this;
 	var camera = game.map.player;
-	angle = Math.degToRad(90 * angle);
 	
-	var aWall = (customBlock)? customBlock : game.aWall;
-	aWall.position.set(x, y, z);
-	aWall.rotation.set(0, angle, 0);
+	var aWall = wallObject;
 	game.GL.drawObject(aWall, camera, game.getTextureById(texId, "wall").texture);
 };
 
@@ -207,13 +206,12 @@ Underworld.prototype.drawDoor = function(x, y, z, rotation, texId){
 	game.GL.drawObject(game.door, camera, game.objectTex[texId].texture);
 };
 
-Underworld.prototype.drawFloor = function(x, y, z, texId, typeOf){
+Underworld.prototype.drawFloor = function(floorObject, texId, typeOf){
 	var game = this;
 	var camera = game.map.player;
 	
-	var floor = (typeOf == 'ceil')? game.ceil : game.floor;
+	var floor = floorObject;
 	var ft = typeOf;
-	floor.position.set(x, y, z);
 	game.GL.drawObject(floor, camera, game.getTextureById(texId, ft).texture);
 };
 
@@ -226,13 +224,11 @@ Underworld.prototype.drawBillboard = function(position, texId, billboard){
 	game.GL.drawObject(billboard, camera, game.objectTex[texId].texture);
 };
 
-Underworld.prototype.drawSlope = function(x, y, z, texId, direction){
+Underworld.prototype.drawSlope = function(slopeObject, texId){
 	var game = this;
 	var camera = game.map.player;
 	
-	var slope = game.slope;
-	slope.position.set(x, y, z);
-	slope.rotation.set(0, -Math.PI_2 * direction, 0);
+	var slope = slopeObject;
 	game.GL.drawObject(slope, camera, game.getTextureById(texId, "floor").texture);
 };
 

@@ -1,11 +1,13 @@
 <?php
-	function createTile($w, $y, $h, $c, $f, $ch, $dw, $aw, $sl, $dir){
+	function createTile($w, $y, $h, $c, $f, $ch, $dw, $aw, $sl, $dir, $fy){
 		global $globTiles;
 		
 		for ($i=1;$i<sizeof($globTiles);$i++){
 			$tile = $globTiles[$i];
 			
-			if ($tile->{"w"} == $w && $tile->{"y"} == $y && $tile->{"h"} == $h && $tile->{"c"} == $c && $tile->{"f"} == $f && $tile->{"ch"} == $ch && $tile->{"dw"} == $dw && $tile->{"aw"} == $aw && $tile->{"sl"} == $sl && $tile->{"dir"} == $dir){
+			$a = $tile->{"w"} == $w && $tile->{"y"} == $y && $tile->{"h"} == $h && $tile->{"c"} == $c && $tile->{"f"} == $f && $tile->{"ch"} == $ch && $tile->{"dw"} == $dw;
+			$b = $tile->{"aw"} == $aw && $tile->{"sl"} == $sl && $tile->{"dir"} == $dir && $tile->{"fy"} == $fy;
+			if ($a && $b){
 				return $i;
 			}
 		}
@@ -21,6 +23,7 @@
 		$tile->{"aw"} = $aw;
 		$tile->{"sl"} = $sl;
 		$tile->{"dir"} = $dir;
+		$tile->{"fy"} = $fy;
 		
 		$ind = sizeof($globTiles);
 		$globTiles[$ind] = $tile;
@@ -57,7 +60,7 @@
 			// Properties of the tile
 			$bu_w = 0;		// Texture of Wall
 			$bu_y = 0;		// Position y
-			$bu_h = 1;		// Height of tile
+			$bu_h = 0;		// Height of tile
 			$bu_c = 0;		// Texture of ceil
 			$bu_f = 0;		// Texture of floor
 			$bu_ch = 1;		// Position of ceil
@@ -65,6 +68,7 @@
 			$bu_aw = 0;		// Angle of Diagonal Wall
 			$bu_sl = 0;		// Texture of slope
 			$bu_dir = 0;	// Direction of slope
+			$bu_fy = null;	// Forced floor position
 			
 			$noTile = true;
 			$mdtY = false;
@@ -100,12 +104,17 @@
 						}
 						if (isset($properties->{"height"})) $bu_h = (real)$properties->{"height"};
 						if (isset($properties->{"ceil_y"})) $bu_ch = (real)$properties->{"ceil_y"};
+						if (isset($properties->{"floor_y"})) $bu_fy = (real)$properties->{"floor_y"};
 					}
 				}
 			}
+
+			if (($bu_w || $bu_dw) && $bu_h === 0) $bu_h = 1;
 			
 			if (!$noTile){
-				$ind = createTile($bu_w, $bu_y, $bu_h, $bu_c, $bu_f, $bu_ch, $bu_dw, $bu_aw, $bu_sl, $bu_dir);
+				if ($bu_fy === null) $bu_fy = $bu_y;
+				$ind = createTile($bu_w, $bu_y, $bu_h, $bu_c, $bu_f, $bu_ch, $bu_dw, $bu_aw, $bu_sl, $bu_dir, $bu_fy);
+				
 				$rMap[$y][$x] = $ind;
 			}
 		}

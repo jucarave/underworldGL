@@ -47,12 +47,13 @@ Player.prototype.moveTo = function(xTo, zTo){
 			movement.sum(normal);
 		}
 		
+		if (i == 0) this.position.a += movement.a;
+		else this.position.c += movement.b;
+		
 		spd = vec2(0, zTo * 2);
 	}
 	
 	if (movement.a != 0 || movement.b != 0){
-		this.position.a += movement.a;
-		this.position.c += movement.b;
 		this.doVerticalChecks();
 		this.jogMovement();
 		moved = true;

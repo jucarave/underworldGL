@@ -10,11 +10,228 @@ function MapManager(game, map){
 	this.orderInstances = [];
 	this.doors = [];
 	
+	this.mapToDraw = [];
+	
 	if (map == "test"){
 		this.loadMap("testMap");
 	}
 }
 
+MapManager.prototype.getEmptyGrid = function(){
+	var grid = [];
+	for (var y=0;y<64;y++){
+		grid[y] = [];
+		for (var x=0;x<64;x++){
+			grid[y][x] = 0;
+		}
+	}
+	
+	return grid;
+};
+
+MapManager.prototype.assembleFloor = function(mapData){
+	var mapM = this;
+	var oFloors = [];
+	var floorsInd = [];
+	for (var y=0,len=mapData.map.length;y<len;y++){
+		for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
+			var tile = mapData.map[y][x];
+			if (tile.f){
+				var ind = floorsInd.indexOf(tile.f);
+				var fl;
+				if (ind == -1){
+					floorsInd.push(tile.f);
+					fl = mapM.getEmptyGrid();
+					fl.tile = tile.f;
+					fl.rTile = tile.rf;
+					oFloors.push(fl);
+				}else{
+					fl = oFloors[ind];
+				}
+				
+				var yy = tile.y;
+				if (tile.w) yy += tile.h;
+				if (tile.fy) yy = tile.fy;
+				fl[y][x] = {tile: tile.f, y: yy};
+				
+			}
+		}
+	}
+	for (var i=0;i<oFloors.length;i++){
+		var floor3D = ObjectFactory.assembleObject(oFloors[i], "F", mapM.game.GL.ctx);
+		floor3D.texInd = oFloors[i].tile;
+		floor3D.rTexInd = oFloors[i].rTile;
+		floor3D.type = "F";
+		mapM.mapToDraw.push(floor3D);
+	}
+};
+
+MapManager.prototype.assembleCeils = function(mapData){
+	var mapM = this;
+	var oCeils = [];
+	var ceilsInd = [];
+	for (var y=0,len=mapData.map.length;y<len;y++){
+		for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
+			var tile = mapData.map[y][x];
+			if (tile.c){
+				var ind = ceilsInd.indexOf(tile.c);
+				var cl;
+				if (ind == -1){
+					ceilsInd.push(tile.c);
+					cl = mapM.getEmptyGrid();
+					cl.tile = tile.c;
+					oCeils.push(cl);
+				}else{
+					cl = oCeils[ind];
+				}
+				
+				cl[y][x] = {tile: tile.c, y: tile.ch};
+				
+			}
+		}
+	}
+	for (var i=0;i<oCeils.length;i++){
+		var ceil3D = ObjectFactory.assembleObject(oCeils[i], "C", mapM.game.GL.ctx);
+		ceil3D.texInd = oCeils[i].tile;
+		ceil3D.type = "C";
+		mapM.mapToDraw.push(ceil3D);
+	}
+};
+
+MapManager.prototype.assembleBlocks = function(mapData){
+	var mapM = this;
+	var oBlocks = [];
+	var blocksInd = [];
+	for (var y=0,len=mapData.map.length;y<len;y++){
+		for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
+			var tile = mapData.map[y][x];
+			if (tile.w){
+				var ind = blocksInd.indexOf(tile.w);
+				var wl;
+				if (ind == -1){
+					blocksInd.push(tile.w);
+					wl = mapM.getEmptyGrid();
+					wl.tile = tile.w;
+					oBlocks.push(wl);
+				}else{
+					wl = oBlocks[ind];
+				}
+				
+				wl[y][x] = {tile: tile.w, y: tile.y, h: tile.h};
+				
+			}
+		}
+	}
+	for (var i=0;i<oBlocks.length;i++){
+		var block3D = ObjectFactory.assembleObject(oBlocks[i], "B", mapM.game.GL.ctx);
+		block3D.texInd = oBlocks[i].tile;
+		block3D.type = "B";
+		mapM.mapToDraw.push(block3D);
+	}
+};
+
+MapManager.prototype.assembleAngledWalls = function(mapData){
+	var mapM = this;
+	var oBlocks = [];
+	var blocksInd = [];
+	for (var y=0,len=mapData.map.length;y<len;y++){
+		for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
+			var tile = mapData.map[y][x];
+			if (tile.dw){
+				var ind = blocksInd.indexOf(tile.dw);
+				var wl;
+				if (ind == -1){
+					blocksInd.push(tile.dw);
+					wl = mapM.getEmptyGrid();
+					wl.tile = tile.dw;
+					oBlocks.push(wl);
+				}else{
+					wl = oBlocks[ind];
+				}
+				
+				wl[y][x] = {tile: tile.dw, y: tile.y, h: tile.h, aw: tile.aw};
+				
+			}
+		}
+	}
+	for (var i=0;i<oBlocks.length;i++){
+		var block3D = ObjectFactory.assembleObject(oBlocks[i], "A", mapM.game.GL.ctx);
+		block3D.texInd = oBlocks[i].tile;
+		block3D.type = "A";
+		mapM.mapToDraw.push(block3D);
+	}
+};
+
+MapManager.prototype.assembleSlopes = function(mapData){
+	var mapM = this;
+	var oSlopes = [];
+	var slopesInd = [];
+	for (var y=0,len=mapData.map.length;y<len;y++){
+		for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
+			var tile = mapData.map[y][x];
+			if (tile.sl){
+				var ind = slopesInd.indexOf(tile.sl);
+				var sl;
+				if (ind == -1){
+					slopesInd.push(tile.sl);
+					sl = mapM.getEmptyGrid();
+					sl.tile = tile.sl;
+					oSlopes.push(sl);
+				}else{
+					sl = oSlopes[ind];
+				}
+				
+				var yy = tile.y;
+				if (tile.w) yy += tile.h;
+				if (tile.fy) yy = tile.fy;
+				sl[y][x] = {tile: tile.sl, y: yy, dir: tile.dir};
+				
+			}
+		}
+	}
+	for (var i=0;i<oSlopes.length;i++){
+		var slope3D = ObjectFactory.assembleObject(oSlopes[i], "S", mapM.game.GL.ctx);
+		slope3D.texInd = oSlopes[i].tile;
+		slope3D.type = "S";
+		mapM.mapToDraw.push(slope3D);
+	}
+};
+
+MapManager.prototype.parseMap = function(mapData){
+	var mapM = this;
+	for (var y=0,len=mapData.map.length;y<len;y++){
+		for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
+			if (mapData.map[y][x] != 0){
+				var tile = mapData.tiles[mapData.map[y][x]];
+				mapData.map[y][x] = tile;
+				
+				if (tile.f && tile.f > 100){
+					tile.rf = tile.f - 100;
+					tile.isWater = true;
+				}
+				
+				/*if (tile.w && !tile.object) tile.object = ObjectFactory.cube(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);
+				else if (tile.dw && !tile.object) tile.object = ObjectFactory.angledWall(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);*/
+			}
+		}
+	}
+};
+
+MapManager.prototype.parseObjects = function(mapData){
+	var mapM = this;
+	for (var i=0,len=mapData.objects.length;i<len;i++){
+		var o = mapData.objects[i];
+		var x = o.x + 0.5;
+		var y = o.y;
+		var z = o.z + 0.5;
+		
+		switch (o.type){
+			case "player":
+				mapM.player = new Player(vec3(x, y, z), vec3(0.0, o.dir * Math.PI_2, 0.0), mapM);
+			break;
+		}
+	}
+};
 
 MapManager.prototype.loadMap = function(mapName){
 	var mapM = this;
@@ -24,41 +241,23 @@ MapManager.prototype.loadMap = function(mapName){
   		if (http.readyState == 4 && http.status == 200) {
   			try{
 				mapData = JSON.parse(http.responseText);
-				for (var y=0,len=mapData.map.length;y<len;y++){
-					for (var x=0,xlen=mapData.map[y].length;x<xlen;x++){
-						if (mapData.map[y][x] != 0){
-							var tile = mapData.tiles[mapData.map[y][x]];
-							mapData.map[y][x] = tile;
-							
-							if (tile.f && tile.f > 100){
-								tile.rf = tile.f - 100;
-								tile.isWater = true;
-							}
-							
-							if (tile.w && !tile.object) tile.object = ObjectFactory.cube(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);
-							else if (tile.dw && !tile.object) tile.object = ObjectFactory.angledWall(vec3(1.0,tile.h,1.0), vec2(1.0,tile.h), mapM.game.GL.ctx, false);
-						}
-					}
-				}
 				
-				for (var i=0,len=mapData.objects.length;i<len;i++){
-					var o = mapData.objects[i];
-					var x = o.x + 0.5;
-					var y = o.y;
-					var z = o.z + 0.5;
-					
-					switch (o.type){
-						case "player":
-							mapM.player = new Player(vec3(x, y, z), vec3(0.0, o.dir * Math.PI_2, 0.0), mapM);
-						break;
-					}
-				}
+				mapM.parseMap(mapData);
+				
+				mapM.assembleFloor(mapData);
+				mapM.assembleCeils(mapData);
+				mapM.assembleBlocks(mapData);
+				mapM.assembleAngledWalls(mapData);
+				mapM.assembleSlopes(mapData);
+				
+				mapM.parseObjects(mapData);
 				
 				mapM.map = mapData.map;
 				
 				mapM.waterTiles = [101];
 				mapM.getInstancesToDraw();
 			}catch (e){
+				console.log(e.message);
 				mapM.map = null;
 			}
 			
@@ -290,6 +489,8 @@ MapManager.prototype.getYFloor = function(x, y){
 	var tt = t.y;
 	
 	if (t.w) tt += t.h;
+	if (t.fy) tt = t.fy;
+	
 	if (this.isWaterTile(t.f)) tt -= 0.3;
 	
 	if (t.sl){
@@ -335,68 +536,35 @@ MapManager.prototype.getCameraViewBlocks = function(){
 };
 
 MapManager.prototype.drawMap = function(){
-	var x1, x2, y1, y2;
+	var x, y;
+	x = this.player.position.a;
+	y = this.player.position.c;
 	
-	var vec = this.getCameraViewBlocks();
-	x1 = vec.a; x2 = vec.c;
-	y1 = vec.b; y2 = vec.d;
-	
-	if (x1 < 0) x1 = 0;
-	if (x2 >= this.map[0].length) x2 = this.map[0].length;
-	
-	if (y1 < 0) y1 = 0;
-	if (y2 >= this.map.length) y2 = this.map.length;
-	
-	for (var i=y1;i<y2;i++){
-		for (var j=x1;j<x2;j++){
-			var t = this.map[i][j];
-			if (t === 0) continue;
-			
-			var fy = t.y;
-			var cy = t.y + t.h;
-			
-			// Draw wall
-			if (t.w > 0){ 
-				this.game.drawBlock(j, fy, i, t.w, t.object);
-				
-				fy = fy + t.h;
-				cy = cy + t.h;
-			}else if (t.dw > 0){
-				// Draw angled 
-				this.game.drawAngledWall(j, fy, i, t.dw, t.aw, t.object);
-			}else if (t.wd > 0){
-				// Wall Door 
-				for (var wy=fy;wy<cy;wy++){ 
-					if (wy == fy)
-						this.game.drawDoorWall(j, wy, i, t.wd, t.ver);
-					else 
-						this.game.drawDoorCube(j, wy, i, t.wd, t.ver);
-				}
+	for (var i=0,len=this.mapToDraw.length;i<len;i++){
+		var mtd = this.mapToDraw[i];
+		
+		if (x < mtd.boundaries[0] || x > mtd.boundaries[2] || y < mtd.boundaries[1] || y > mtd.boundaries[3])
+			continue;
+		
+		if (mtd.type == "B"){ // Blocks
+			this.game.drawBlock(mtd, mtd.texInd);
+		}else if (mtd.type == "A"){ // Angled Walls
+			this.game.drawAngledWall(mtd, mtd.texInd);
+		}else if (mtd.type == "F"){ // Floors
+			var tt = mtd.texInd;
+			if (this.isWaterTile(tt)){ 
+				tt = (mtd.rTexInd) + (this.waterFrame << 0);
+				this.game.drawFloor(mtd, tt, 'water');
+			}else{
+				this.game.drawFloor(mtd, tt, 'floor');
 			}
-			
-			// Draw Slope
-			if (t.sl){
-				this.game.drawSlope(j, fy, i, t.sl, t.dir);
-			}
-			
-			// Draw floor
-			if (t.f){
-				var tt = t.f;
-				if (this.isWaterTile(tt)){ 
-					tt = (t.rf) + (this.waterFrame << 0);
-					this.game.drawFloor(j, 0.0 + fy, i, tt, 'water');
-				}else{
-					this.game.drawFloor(j, 0.0 + fy, i, tt, 'floor');
-				}
-			}
-			
-			// Draw ceil
-			if (t.c){
-				if (t.ch) cy = t.ch;
-				var tt = t.c;
-				this.game.drawFloor(j, 0.0 + cy, i, tt, 'ceil');
-			}
+		}else if (mtd.type == "C"){ // Ceils
+			var tt = mtd.texInd;
+			this.game.drawFloor(mtd, tt, 'ceil');
+		}else if (mtd.type == "S"){ // Slope
+			this.game.drawSlope(mtd, mtd.texInd);
 		}
+		
 	}
 };
 
