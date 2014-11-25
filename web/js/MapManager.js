@@ -78,32 +78,6 @@ MapManager.prototype.createTestMap = function(){
 	//Slopes
 	U = {w: 3, sl: 4, y: -1.5, h: 1, c: 7, ch: 2, dir: 0};
 	
-	this.map = [
-		[0,0,0,0,A,A,A,A,A,A,A,0,0,0,0,0,0,0],
-		[0,0,0,0,A,I,C,C,C,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,A,I,I,C,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,A,I,I,U,I,I,A,0,0,0,0,0,0,0],
-		[0,0,0,0,A,A,A,J,A,A,A,0,0,0,D,D,D,0],
-		[0,0,0,0,0,0,B,J,B,0,0,0,0,D,D,K,D,0],
-		[0,0,0,0,0,0,B,J,B,0,0,0,D,D,K,K,D,D],
-		[0,0,0,0,0,0,B,J,B,B,B,T,D,K,K,K,K,D],
-		[0,0,0,0,0,0,B,M,J,J,J,J,S,K,N,O,K,D],
-		[0,0,0,0,0,0,B,B,B,B,R,B,D,K,Q,P,K,D],
-		[0,0,0,0,0,0,0,0,0,B,J,B,D,K,K,K,K,D],
-		[0,0,0,0,0,0,0,0,0,B,J,B,D,D,D,D,D,D],
-		[0,0,0,0,0,0,D,D,D,B,J,B,D,D,D,0,0,0],
-		[0,0,0,0,0,0,D,E,E,E,E,E,E,E,D,0,0,0],
-		[0,0,F,F,F,F,F,V,V,V,V,V,V,V,F,0,0,0],
-		[0,0,F,V,V,V,V,V,V,V,V,V,V,V,F,0,0,0],
-		[H,H,F,G,F,F,F,V,V,V,V,V,V,V,F,0,0,0],
-		[H,L,L,L,H,H,D,E,E,E,E,E,E,E,D,0,0,0],
-		[H,L,L,L,L,H,D,D,D,D,D,D,D,D,D,0,0,0],
-		[H,L,L,L,L,H,0,0,0,0,0,0,0,0,0,0,0,0],
-		[H,H,H,H,H,H,0,0,0,0,0,0,0,0,0,0,0,0]
-	];
-	
 	this.waterTiles = [5];
 	this.player = new Player(vec3(7.5, -0.5, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
 	
@@ -226,7 +200,7 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 		else if (t.aw == 1){ xxx = x - xx; zzz =  z - zz; normal = ObjectFactory.normals.upRight; }
 		else if (t.aw == 2){ xxx = x - xx; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downRight; }
 		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downLeft; }
-		if (zzz + 0.2 >= xxx){
+		if (zzz >= xxx){
 			return normal;
 		}
 	}else if (t.wd){
@@ -279,38 +253,6 @@ MapManager.prototype.getYFloor = function(x, y){
 	return tt;
 };
 
-MapManager.prototype.getCameraViewBlocks = function(){
-	var x1, x2, y1, y2, p, ang;
-	
-	x1 = x2 = y1 = y2 = 0;
-	p = this.player;
-	ang = Math.radToDeg(p.rotation.b);
-	
-	if (ang >= 315 || ang < 45){
-		x1 = (p.position.a << 0);
-		x2 = x1 + 6;
-		y1 = (p.position.c << 0) - 6;
-		y2 = y1 + 12;
-	}else if (ang >= 45 && ang < 135){
-		x1 = (p.position.a << 0) - 6;
-		x2 = x1 + 12;
-		y1 = (p.position.c << 0) - 5;
-		y2 = y1 + 6;
-	}else if (ang >= 135 && ang < 225){
-		x1 = (p.position.a << 0) - 5;
-		x2 = x1 + 6;
-		y1 = (p.position.c << 0) - 6;
-		y2 = y1 + 12;
-	}else if (ang >= 225 && ang < 315){
-		x1 = (p.position.a << 0) - 6;
-		x2 = x1 + 12;
-		y1 = (p.position.c << 0);
-		y2 = y1 + 6;
-	}
-	
-	return vec4(x1,y1,x2,y2);
-};
-
 MapManager.prototype.drawMap = function(){
 	var x, y;
 	x = this.player.position.a;
@@ -340,8 +282,72 @@ MapManager.prototype.drawMap = function(){
 		}else if (mtd.type == "S"){ // Slope
 			this.game.drawSlope(mtd, mtd.texInd);
 		}
-		
 	}
+	
+	/*var x1, x2, y1, y2;
+	
+	var vec = this.getCameraViewBlocks();
+	x1 = vec.a; x2 = vec.c;
+	y1 = vec.b; y2 = vec.d;
+	
+	if (x1 < 0) x1 = 0;
+	if (x2 >= this.map[0].length) x2 = this.map[0].length;
+	
+	if (y1 < 0) y1 = 0;
+	if (y2 >= this.map.length) y2 = this.map.length;
+	
+	for (var i=y1;i<y2;i++){
+		for (var j=x1;j<x2;j++){
+			var t = this.map[i][j];
+			if (t === 0) continue;
+			
+			var fy = t.y;
+			var cy = t.y + t.h;
+			
+			// Draw wall
+			if (t.w > 0){ 
+				this.game.drawBlock(j, fy, i, t.w, t.object);
+				
+				fy = fy + t.h;
+				cy = cy + t.h;
+			}else if (t.dw > 0){
+				// Draw angled 
+				this.game.drawAngledWall(j, fy, i, t.dw, t.aw, t.object);
+			}else if (t.wd > 0){
+				// Wall Door 
+				for (var wy=fy;wy<cy;wy++){ 
+					if (wy == fy)
+						this.game.drawDoorWall(j, wy, i, t.wd, t.ver);
+					else 
+						this.game.drawDoorCube(j, wy, i, t.wd, t.ver);
+				}
+			}
+			
+			if (t.fy) fy = t.fy;
+			// Draw Slope
+			if (t.sl){
+				this.game.drawSlope(j, fy, i, t.sl, t.dir);
+			}
+			
+			// Draw floor
+			if (t.f){
+				var tt = t.f;
+				if (this.isWaterTile(tt)){ 
+					tt = (t.rf) + (this.waterFrame << 0);
+					this.game.drawFloor(j, 0.0 + fy, i, tt, 'water');
+				}else{
+					this.game.drawFloor(j, 0.0 + fy, i, tt, 'floor');
+				}
+			}
+			
+			// Draw ceil
+			if (t.c){
+				if (t.ch) cy = t.ch;
+				var tt = t.c;
+				this.game.drawFloor(j, 0.0 + cy, i, tt, 'ceil');
+			}
+		}
+	}*/
 };
 
 MapManager.prototype.getPlayerItem = function(itemCode){

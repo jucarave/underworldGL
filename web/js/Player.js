@@ -34,11 +34,12 @@ Player.prototype.moveTo = function(xTo, zTo){
 	
 	if (this.onWater){ xTo /= 2; zTo /=2; }
 	var movement = vec2(xTo, zTo);
-	var spd = vec2(xTo * 2, 0);
+	var spd = vec2(xTo * 1.5, 0);
+	var fakePos = this.position.clone();
 	
 	for (var i=0;i<2;i++){
-		var normal = this.mapManager.getWallNormal(this.position, spd, this.cameraHeight, this.onWater);
-		if (!normal){ normal = this.mapManager.getInstanceNormal(this.position, spd); } 
+		var normal = this.mapManager.getWallNormal(fakePos, spd, this.cameraHeight, this.onWater);
+		if (!normal){ normal = this.mapManager.getInstanceNormal(fakePos, spd); } 
 		
 		if (normal){
 			normal = normal.clone();
@@ -47,13 +48,15 @@ Player.prototype.moveTo = function(xTo, zTo){
 			movement.sum(normal);
 		}
 		
-		if (i == 0) this.position.a += movement.a;
-		else this.position.c += movement.b;
+		fakePos.a += spd.a;
+		fakePos.c += spd.b;
 		
-		spd = vec2(0, zTo * 2);
+		spd = vec2(0, zTo * 1.5);
 	}
 	
 	if (movement.a != 0 || movement.b != 0){
+		this.position.a += movement.a;
+		this.position.c += movement.b;
 		this.doVerticalChecks();
 		this.jogMovement();
 		moved = true;
