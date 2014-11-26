@@ -164,6 +164,27 @@ MapManager.prototype.getInstanceNormal = function(pos, spd){
 	if (pos.c > ins.position.c + 1) return ObjectFactory.normals.down;
 };
 
+MapManager.prototype.wallHasNormal = function(x, y, normal){
+	var t1 = this.map[y][x];
+	switch (normal){
+		case 'u': y -= 1; break;
+		case 'l': x -= 1; break;
+		case 'd': y += 1; break;
+		case 'r': x += 1; break;
+	}
+	
+	if (!this.map[y]) return true;
+	if (this.map[y][x] === undefined) return true;
+	if (this.map[y][x] === 0) return true;
+	var t2 = this.map[y][x];
+	
+	if (t2.y+t2.h >= t1.y && t2.y <= t1.y+t1.h){
+		if (!t2.w) return true;
+	}
+	
+	return false;
+};
+
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 	var xx = ((pos.a + spd.a) << 0);
 	var zz = ((pos.c + spd.b) << 0);
@@ -186,10 +207,10 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 		if (tex.isSolid){
 			var xxx = pos.a - xx;
 			var zzz = pos.c - zz;
-			if (zzz <= 0){ return ObjectFactory.normals.up; }else
-			if (zzz >= 1){ return ObjectFactory.normals.down; }else
-			if (xxx <= 0){ return ObjectFactory.normals.left; }else
-			if (xxx >= 1){ return ObjectFactory.normals.right; }
+			if (this.wallHasNormal(xx, zz, 'u') && zzz <= 0){ return ObjectFactory.normals.up; }
+			if (this.wallHasNormal(xx, zz, 'd') && zzz >= 1){ return ObjectFactory.normals.down; }
+			if (this.wallHasNormal(xx, zz, 'l') && xxx <= 0){ return ObjectFactory.normals.left; }
+			if (this.wallHasNormal(xx, zz, 'r') && xxx >= 1){ return ObjectFactory.normals.right; }
 		}
 	}else if (t.dw){
 		var x, z, xxx, zzz, normal;
