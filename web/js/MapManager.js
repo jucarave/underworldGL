@@ -186,22 +186,45 @@ MapManager.prototype.wallHasNormal = function(x, y, normal){
 };
 
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
-	var xx = ((pos.a + spd.a) << 0);
-	var zz = ((pos.c + spd.b) << 0);
+	var xs = (pos.a << 0);
+	var zs = (pos.c << 0);
+	
+	var xe = ((pos.a + spd.a) << 0);
+	var ze = ((pos.c + spd.b) << 0);
+	
+	if (xe < xs){
+		xs = ((pos.a + spd.a) << 0);
+		xe = (pos.a << 0);
+	}
+	if (ze < zs){
+		zs = ((pos.c + spd.b) << 0);
+		ze = (pos.c << 0);
+	}
+	
+	var xx, zz, t, th;
 	var y = pos.b;
 	
-	if (!this.map[zz]) return null;
-	if (this.map[zz][xx] === undefined) return null;
-	if (this.map[zz][xx] === 0) return null;
-	var t = this.map[zz][xx];
+	for (var i=xs;i<=xe;i++){ for (var j=zs;j<=ze;j++){
+		xx = i; zz = j;
+		t = null; th = null;
+		
+		if (!this.map[zz]) continue;
+		if (this.map[zz][xx] === undefined) continue;
+		if (this.map[zz][xx] === 0) continue;
+		
+		t = this.map[zz][xx];
+		th = t.h - 0.3;
+		if (inWater) y += 0.3;
+		
+		if (!t.w && !t.dw && !t.wd) continue;
+		if (t.y+th <= y) continue;
+		else if (t.y > y + h) continue;
+		
+		i = xe + 1;
+		j = ze + 1;
+	} }
 	
-	var th = t.h - 0.3;
-	if (inWater) y += 0.3;
-	
-	if (!t.w && !t.dw && !t.wd) return null;
-	if (t.y+th <= y) return null;
-	else if (t.y > y + h) return null;
-	
+	if (!t) return null;
 	if (t.w){
 		var tex = this.game.getTextureById(t.w, "wall");
 		if (tex.isSolid){
