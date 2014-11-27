@@ -178,8 +178,8 @@ MapManager.prototype.wallHasNormal = function(x, y, normal){
 	if (this.map[y][x] === 0) return true;
 	var t2 = this.map[y][x];
 	
-	if (t2.y+t2.h >= t1.y && t2.y <= t1.y+t1.h){
-		if (!t2.w) return true;
+	if (!t2.w && t2.y+t2.h >= t1.y && t2.y <= t1.y+t1.h){
+		return true;
 	}
 	
 	return false;

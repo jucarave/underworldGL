@@ -21,23 +21,10 @@ var ObjectFactory = {
 		var ty = texRepeat.b;
 		
 		vertex = [
-			// Front Face
 			 w,  h, -l,
 			 w,  0, -l,
 			-w,  h,  l,
 			-w,  0,  l,
-			
-			// Back Face
-			-w,  h,  l,
-			-w,  0,  l,
-			 w,  h,  l,
-			 w,  0,  l,
-			 
-			// Right Face
-			 w,  h,  l,
-			 w,  0,  l,
-			 w,  h, -l,
-			 w,  0, -l
 		];
 		
 		if (dir != 0){
@@ -59,14 +46,12 @@ var ObjectFactory = {
 		}
 		
 		texCoords = [];
-		for (var i=0;i<3;i++){
-			texCoords.push(
-				 tx, ty,
-				 tx,0.0,
-				0.0, ty,
-				0.0,0.0
-			);
-		}
+		texCoords.push(
+			 tx, ty,
+			 tx,0.0,
+			0.0, ty,
+			0.0,0.0
+		);
 		
 		darkVertex = [];
 		for (var i=0;i<12;i++){

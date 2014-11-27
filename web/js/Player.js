@@ -48,8 +48,8 @@ Player.prototype.moveTo = function(xTo, zTo){
 			movement.sum(normal);
 		}
 		
-		fakePos.a += spd.a;
-		fakePos.c += spd.b;
+		fakePos.a += movement.a * spd.a;
+		fakePos.c += movement.b * spd.b;
 		
 		spd = vec2(0, zTo * 1.5);
 	}
