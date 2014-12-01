@@ -178,7 +178,8 @@ MapManager.prototype.wallHasNormal = function(x, y, normal){
 	if (this.map[y][x] === 0) return true;
 	var t2 = this.map[y][x];
 	
-	if (!t2.w && t2.y+t2.h >= t1.y && t2.y <= t1.y+t1.h){
+	if (!t2.w) return true;
+	if (t2.w && !(t2.y == t1.y && t2.h == t1.h)){
 		return true;
 	}
 	
@@ -186,43 +187,24 @@ MapManager.prototype.wallHasNormal = function(x, y, normal){
 };
 
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
-	var xs = (pos.a << 0);
-	var zs = (pos.c << 0);
+	var xx = ((pos.a + spd.a) << 0);
+	var zz = ((pos.c + spd.b) << 0);
 	
-	var xe = ((pos.a + spd.a) << 0);
-	var ze = ((pos.c + spd.b) << 0);
-	
-	if (xe < xs){
-		xs = ((pos.a + spd.a) << 0);
-		xe = (pos.a << 0);
-	}
-	if (ze < zs){
-		zs = ((pos.c + spd.b) << 0);
-		ze = (pos.c << 0);
-	}
-	
-	var xx, zz, t, th;
+	var t, th;
 	var y = pos.b;
 	
-	for (var i=xs;i<=xe;i++){ for (var j=zs;j<=ze;j++){
-		xx = i; zz = j;
-		t = null; th = null;
-		
-		if (!this.map[zz]) continue;
-		if (this.map[zz][xx] === undefined) continue;
-		if (this.map[zz][xx] === 0) continue;
-		
-		t = this.map[zz][xx];
-		th = t.h - 0.3;
-		if (inWater) y += 0.3;
-		
-		if (!t.w && !t.dw && !t.wd) continue;
-		if (t.y+th <= y) continue;
-		else if (t.y > y + h) continue;
-		
-		i = xe + 1;
-		j = ze + 1;
-	} }
+	if (!this.map[zz]) return null;
+	if (this.map[zz][xx] === undefined) return null;
+	if (this.map[zz][xx] === 0) return null;
+	
+	t = this.map[zz][xx];
+	th = t.h - 0.3;
+	if (inWater) y += 0.3;
+	if (t.sl) th += 0.2;
+	
+	if (!t.w && !t.dw && !t.wd) return null;
+	if (t.y+th <= y) return null;
+	else if (t.y > y + h) return null;
 	
 	if (!t) return null;
 	if (t.w){
