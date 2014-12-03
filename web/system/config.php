@@ -1,6 +1,6 @@
 <?php
-	$version = "A0.3";
-	$environment = "SERVER";
+	$version = "A0.4";
+	$environment = "LOCAL";
 	$contextPath = "/underworldGL/";
 	
 	if ($environment == "SERVER"){

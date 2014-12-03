@@ -6,8 +6,8 @@ function Door(mapManager, wallPosition, dir, textureCode, lock){
 	this.textureCode = textureCode;
 	
 	this.position = wallPosition.clone();
-	if (dir == "H"){ this.position.sum(vec3(-0.25, -0.5, 0.0)); }else
-	if (dir == "V"){ this.position.sum(vec3(0.0, -0.5, -0.25)); this.rotation = Math.PI_2; }
+	if (dir == "H"){ this.position.sum(vec3(-0.25, 0.0, 0.0)); }else
+	if (dir == "V"){ this.position.sum(vec3(0.0, 0.0, -0.25)); this.rotation = Math.PI_2; }
 	
 	this.lock = lock;
 	this.closed = true;

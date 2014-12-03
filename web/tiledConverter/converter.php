@@ -1,12 +1,12 @@
 <?php
-	function createTile($w, $y, $h, $c, $f, $ch, $dw, $aw, $sl, $dir, $fy){
+	function createTile($w, $y, $h, $c, $f, $ch, $dw, $aw, $sl, $dir, $fy, $wd, $wd_ver){
 		global $globTiles;
 		
 		for ($i=1;$i<sizeof($globTiles);$i++){
 			$tile = $globTiles[$i];
 			
 			$a = $tile->{"w"} == $w && $tile->{"y"} == $y && $tile->{"h"} == $h && $tile->{"c"} == $c && $tile->{"f"} == $f && $tile->{"ch"} == $ch && $tile->{"dw"} == $dw;
-			$b = $tile->{"aw"} == $aw && $tile->{"sl"} == $sl && $tile->{"dir"} == $dir && $tile->{"fy"} == $fy;
+			$b = $tile->{"aw"} == $aw && $tile->{"sl"} == $sl && $tile->{"dir"} == $dir && $tile->{"fy"} == $fy && $tile->{"wd"} == $wd && $tile->{"wd_ver"} == $wd_ver;
 			if ($a && $b){
 				return $i;
 			}
@@ -24,6 +24,8 @@
 		$tile->{"sl"} = $sl;
 		$tile->{"dir"} = $dir;
 		$tile->{"fy"} = $fy;
+		$tile->{"wd"} = $wd;
+		$tile->{"wd_ver"} = $wd_ver;
 		
 		$ind = sizeof($globTiles);
 		$globTiles[$ind] = $tile;
@@ -69,6 +71,8 @@
 			$bu_sl = 0;		// Texture of slope
 			$bu_dir = 0;	// Direction of slope
 			$bu_fy = null;	// Forced floor position
+			$bu_wd = 0;		// Wall Door Texture
+			$bu_wd_ver = false;		// Wall Door Texture
 			
 			$noTile = true;
 			$mdtY = false;
@@ -96,6 +100,9 @@
 							$bu_c = floor($t / 16) + 1;
 						}else if ($typeof == 12){ // Water tile
 							$bu_f = floor($t / 16) + 101;
+						}else if ($typeof == 13 || $typeof == 14){ // Door tile
+							$bu_wd = floor($t / 16) + 1;
+							$bu_wd_ver = ($typeof == 13);
 						}
 						
 						if (isset($properties->{"y"})){
@@ -113,7 +120,7 @@
 			
 			if (!$noTile){
 				if ($bu_fy === null) $bu_fy = $bu_y;
-				$ind = createTile($bu_w, $bu_y, $bu_h, $bu_c, $bu_f, $bu_ch, $bu_dw, $bu_aw, $bu_sl, $bu_dir, $bu_fy);
+				$ind = createTile($bu_w, $bu_y, $bu_h, $bu_c, $bu_f, $bu_ch, $bu_dw, $bu_aw, $bu_sl, $bu_dir, $bu_fy, $bu_wd, $bu_wd_ver);
 				
 				$rMap[$y][$x] = $ind;
 			}
@@ -141,6 +148,13 @@
 						
 						$obj->{"dir"} = $o_dir;
 						$obj->{"type"} = "player";
+						$globObjects[sizeof($globObjects)] = $obj;
+					break;
+					case "door":
+						$o_dir = $properties->{"direction"};
+						
+						$obj->{"dir"} = $o_dir;
+						$obj->{"type"} = "door";
 						$globObjects[sizeof($globObjects)] = $obj;
 					break;
 				}
