@@ -1,0 +1,17 @@
+#renderDiv {
+	width:75%; 
+	background-color: #181F42;
+}
+
+#renderDiv div{
+	width: 100%;
+	height: 50%;
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+}
+
+canvas {
+	margin: 0px auto 0px auto;
+	height: 100%;
+}
