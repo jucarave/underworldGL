@@ -14,6 +14,18 @@ var Matrix = {
 		];
 	},
 	
+	newMatrix: function(cols, rows){
+		var ret = new Array(rows);
+		for (var i=0;i<rows;i++){
+			ret[i] = new Array(cols);
+			for (var j=0;j<cols;j++){
+				ret[i][j] = 0;
+			}
+		}
+		
+		return ret;
+	},
+	
 	getIdentity: function(){
 		return [
 			1, 0, 0, 0,

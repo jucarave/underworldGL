@@ -4,6 +4,7 @@ function Door(mapManager, wallPosition, dir, textureCode, lock){
 	this.rotation = 0;
 	this.dir = dir;
 	this.textureCode = textureCode;
+	this.rTextureCode = textureCode; // Delete
 	
 	this.position = wallPosition.clone();
 	if (dir == "H"){ this.position.sum(vec3(-0.25, 0.0, 0.0)); }else

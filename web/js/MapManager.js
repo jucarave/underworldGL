@@ -434,8 +434,53 @@ MapManager.prototype.getInstancesToDraw = function(){
 	}
 };
 
+MapManager.prototype.getInstancesNear = function(){
+	var ret = [];
+	for (var i=0,len=this.doors.length;i<len;i++){
+		var ins = this.doors[i];
+		
+		if (!ins) continue;
+		var xx = Math.abs(ins.position.a - this.player.position.a);
+		var zz = Math.abs(ins.position.c - this.player.position.c);
+		
+		if (xx > 1.5 || zz > 1.5) continue;
+		
+		ret.push(ins);
+	}
+	
+	return ret;
+};
+
+MapManager.prototype.raycastCursorObject = function(){
+	var mouse_p = this.game.mouse;
+	var viewport_p = vec2(mouse_p.a - 24, mouse_p.b - 36);
+	var size = vec2(192, 128);
+	
+	if (viewport_p.a < 0 || viewport_p.b < 0 || viewport_p.a > size.a || viewport_p.b > size.b) return;
+	
+	var ray_pos = this.player.position;
+	var ray_dir = this.player.rotation.b;
+	
+	var ray = {
+		x1: ray_pos.a,
+		y1: ray_pos.c,
+		x2: ray_pos.a + Math.cos(ray_dir),
+		y2: ray_pos.c - Math.sin(ray_dir)
+	};
+	
+	var instances = this.getInstancesNear();
+	for (var i=0,len=instances.length;i<len;i++){
+		var ins = instances[i];
+		ins.textureCode = "door2";
+	}
+};
+
 MapManager.prototype.loop = function(){
 	if (this.map == null) return;
+	
+	if (this.game.getMouseButtonPressed()){
+		this.raycastCursorObject();
+	}
 	
 	this.step();
 	
@@ -462,7 +507,7 @@ MapManager.prototype.loop = function(){
 		
 		if (!ins) continue;
 		var xx = Math.abs(ins.position.a - this.player.position.a);
-		var zz = Math.abs(ins.position.z - this.player.position.z);
+		var zz = Math.abs(ins.position.c - this.player.position.c);
 		
 		if (xx > 6 || zz > 6) continue;
 		
