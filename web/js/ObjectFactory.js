@@ -199,7 +199,7 @@ var ObjectFactory = {
 		var w2 = -size.a * 0.25;
 		var w3 = size.a * 0.25;
 		
-		var h2 = size.b * 0.25;
+		var h2 = 1 - size.b * 0.25;
 		
 		var tx = texRepeat.a;
 		var ty = texRepeat.b;

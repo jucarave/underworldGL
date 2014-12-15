@@ -43,57 +43,6 @@ MapManager.prototype.loadMap = function(mapName){
 	http.send();
 };
 
-MapManager.prototype.createTestMap = function(){
-	var A, B, C, D, E, F, G, H, M, N, O, P, Q, R, S, T;
-	// Walls
-	A = {w: 3, y: -1, h: 3};
-	B = {w: 3, y: 0, h: 2};
-	C = {w: 3, y: -1.5, h: 1, c: 7, f: 4, ch: 2};
-	D = {w: 1, y: 0, h: 2};
-	E = {w: 1, y: -1, h: 1, c: 7, f: 1, ch: 2};
-	F = {w: 1, y: -1, h: 3};
-	G = {w: 2, y: -1, h: 1, c: 2, f: 2, ch: 2};
-	H = {w: 2, y: 0, h: 2};
-	M = {dw: 3, aw: 1, y: 0, h: 2, f: 4, c: 7};
-	
-	N = {dw: 1, aw: 0, y: 0, h: 2, f: 1, c: 7};
-	O = {dw: 1, aw: 1, y: 0, h: 2, f: 1, c: 7};
-	P = {dw: 1, aw: 2, y: 0, h: 2, f: 1, c: 7};
-	Q = {dw: 1, aw: 3, y: 0, h: 2, f: 1, c: 7};
-	
-	R = {wd: 3, f: 4, c: 7, y: 0, h: 2, ch: 2, ver: 0};
-	S = {wd: 1, f: 1, c: 7, y: 0, h: 2, ch: 2, ver: 1};
-	
-	T = {w: 8, y: 0, h: 2};
-	
-	var I, J, K, L, V;
-	// Floors
-	I = {f: 5, c: 7, y: -0.8, h: 2.8};
-	J = {f: 4, c: 7, y: 0, h: 2};
-	K = {f: 1, c: 7, y: 0, h: 2};
-	L = {f: 2, c: 2, y: 0, h: 2};
-	V = {f: 5, c: 7, y: -0.3, h: 2.3};
-	
-	var U;
-	//Slopes
-	U = {w: 3, sl: 4, y: -1.5, h: 1, c: 7, ch: 2, dir: 0};
-	
-	this.waterTiles = [5];
-	this.player = new Player(vec3(7.5, -0.5, 2.5), vec3(0.0, Math.PI3_2, 0.0), this);
-	
-	this.doors.push(new Door(this, vec3(10.0, 0.0, 11.0), "H", "door1", "goldKey"));
-	this.doors.push(new Door(this, vec3(12.0, 0.0, 10.0), "V", "door1", "noKey"));
-	
-	this.instances.push(new Billboard(vec3(11.0,0.0,9.0), "none", this, {ac: ["cw_9", "ud_12,0,10", "destroy"]}));
-	
-	this.instances.push(new Billboard(vec3(6.0,-0.5,1.0), "lamp1", this, {nf: 3, cb: vec3(0.5,1.0,0.0), ac: ["cf_1,2,0"]}));
-	this.instances.push(new Billboard(vec3(8.0,-0.5,1.0), "lamp1", this, {nf: 3, is: 1/3, cb: vec3(0.5,1.0,0.0), ac: ["ct_lamp1Off","nf_1"]}));
-	this.instances.push(new Enemy(vec3(10.0,0.0,17.0), "gargoyle", this));
-	this.instances.push(new Item(vec3(15.0,0.0,7.0), ItemFactory.getItemByCode("goldKey", 1), this));
-	
-	this.getInstancesToDraw();
-};
-
 MapManager.prototype.isWaterTile = function(tileId){
 	return (this.waterTiles.indexOf(tileId) != -1);
 };
@@ -186,6 +135,32 @@ MapManager.prototype.wallHasNormal = function(x, y, normal){
 	return false;
 };
 
+MapManager.prototype.getDoorNormal = function(pos, spd, h, inWater){
+	var xx = ((pos.a + spd.a) << 0);
+	var zz = ((pos.c + spd.b) << 0);
+	var y = pos.b;
+	
+	var door = this.getDoorAt(xx, y, zz);
+	if (door){
+		var xxx = (pos.a + spd.a) - xx;
+		var zzz = (pos.c + spd.b) - zz;
+		
+		var x = (pos.a - xx);
+		var z = (pos.c - zz);
+		if (door.dir == "V"){
+			if (door && door.isSolid()) return ObjectFactory.normals.left;
+			if (zzz > 0.25 && zzz < 0.75) return null;
+			if (x < 0 || x > 1) return ObjectFactory.normals.left;
+			else return ObjectFactory.normals.up;
+		}else{
+			if (door && door.isSolid()) return ObjectFactory.normals.up;
+			if (xxx > 0.25 && xxx < 0.75) return null;
+			if (z < 0 || z > 1) return ObjectFactory.normals.up;
+			else return ObjectFactory.normals.left;
+		}
+	}
+};
+
 MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 	var xx = ((pos.a + spd.a) << 0);
 	var zz = ((pos.c + spd.b) << 0);
@@ -228,24 +203,6 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 		else if (t.aw == 3){ xxx = (xx + 1) - x; zzz =  (zz + 1) - z; normal = ObjectFactory.normals.downLeft; }
 		if (zzz >= xxx){
 			return normal;
-		}
-	}else if (t.wd){
-		var door = this.getDoorAt(xx, t.y, zz);
-		var xxx = (pos.a + spd.a) - xx;
-		var zzz = (pos.c + spd.b) - zz;
-		
-		var x = (pos.a - xx);
-		var z = (pos.c - zz);
-		if (t.ver){
-			if (door && door.isSolid()) return ObjectFactory.normals.left;
-			if (zzz > 0.25 && zzz < 0.75) return null;
-			if (x < 0 || x > 1) return ObjectFactory.normals.left;
-			else return ObjectFactory.normals.up;
-		}else{
-			if (door && door.isSolid()) return ObjectFactory.normals.up;
-			if (xxx > 0.25 && xxx < 0.75) return null;
-			if (z < 0 || z > 1) return ObjectFactory.normals.up;
-			else return ObjectFactory.normals.left;
 		}
 	}
 	
@@ -434,18 +391,15 @@ MapManager.prototype.getInstancesToDraw = function(){
 	}
 };
 
-MapManager.prototype.getInstancesNear = function(){
+MapManager.prototype.getInstancesAt = function(x, z){
 	var ret = [];
 	for (var i=0,len=this.doors.length;i<len;i++){
 		var ins = this.doors[i];
 		
 		if (!ins) continue;
-		var xx = Math.abs(ins.position.a - this.player.position.a);
-		var zz = Math.abs(ins.position.c - this.player.position.c);
 		
-		if (xx > 1.5 || zz > 1.5) continue;
-		
-		ret.push(ins);
+		if (Math.round(ins.position.a) == x && Math.round(ins.position.c) == z)
+			ret.push(ins);
 	}
 	
 	return ret;
@@ -458,20 +412,26 @@ MapManager.prototype.raycastCursorObject = function(){
 	
 	if (viewport_p.a < 0 || viewport_p.b < 0 || viewport_p.a > size.a || viewport_p.b > size.b) return;
 	
+	var viewport_x = Math.degToRad((viewport_p.a - size.a / 2) / size.a * 70);
+	
 	var ray_pos = this.player.position;
-	var ray_dir = this.player.rotation.b;
+	var ray_dir = this.player.rotation.b - viewport_x;
 	
 	var ray = {
 		x1: ray_pos.a,
 		y1: ray_pos.c,
-		x2: ray_pos.a + Math.cos(ray_dir),
-		y2: ray_pos.c - Math.sin(ray_dir)
+		x2: ray_pos.a + Math.cos(ray_dir) * 1,
+		y2: ray_pos.c - Math.sin(ray_dir) * 1
 	};
 	
-	var instances = this.getInstancesNear();
+	var instances = this.getInstancesAt((ray.x2) << 0, (ray.y2) << 0);
 	for (var i=0,len=instances.length;i<len;i++){
 		var ins = instances[i];
-		ins.textureCode = "door2";
+		var bBox = ins.getBoundingBox();
+		
+		if (this.game.lineBoxCollision(ray, bBox)){
+			ins.activate();
+		}
 	}
 };
 
@@ -518,6 +478,7 @@ MapManager.prototype.loop = function(){
 		
 		ins.loop();
 		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.rotation, ins.textureCode);
+		this.game.drawDoorWall(ins.doorPosition.a, ins.doorPosition.b, ins.doorPosition.c, ins.wallTexture, (ins.dir == "V"));
 	}
 	
 	this.player.loop();

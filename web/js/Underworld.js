@@ -41,11 +41,6 @@ function Underworld(){
 }
 
 Underworld.prototype.create3DObjects = function(){
-	this.cube = ObjectFactory.cube(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx, false);
-	this.aWall = ObjectFactory.angledWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	//this.floor = ObjectFactory.floor(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	this.ceil = ObjectFactory.ceil(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
-	
 	this.door = ObjectFactory.door(vec3(0.5,0.75,0.1), vec2(1.0,1.0), this.GL.ctx, false);
 	this.doorW = ObjectFactory.doorWall(vec3(1.0,1.0,1.0), vec2(1.0,1.0), this.GL.ctx);
 	this.doorC = ObjectFactory.cube(vec3(1.0,1.0,0.1), vec2(1.0,1.0), this.GL.ctx, true);
@@ -89,7 +84,6 @@ Underworld.prototype.loadTextures = function(){
 	this.textures.ceil.push(this.GL.loadImage(cp + "img/texCDirt.png?version=" + version, true, 2));
 	
 	this.objectTex.door1 = this.GL.loadImage(cp + "img/texDoor1.png?version=" + version, true);
-	this.objectTex.door2 = this.GL.loadImage(cp + "img/texDoor2.png?version=" + version, true);
 	this.objectTex.lamp1Off = this.GL.loadImage(cp + "img/texLamp1_off.png?version=" + version, true);
 	this.objectTex.lamp1 = this.GL.loadImage(cp + "img/texLamp1.png?version=" + version, true);
 	this.objectTex.items = this.GL.loadImage(cp + "img/texItems.png?version=" + version, true, {imgNum: 1, imgVNum: 1});
@@ -139,6 +133,47 @@ Underworld.prototype.loadMap = function(map){
 	var game = this;
 	game.map = new MapManager(this, map);
 	game.scene = null;
+};
+
+Underworld.prototype.lineBoxCollision = function(line, box){
+	var l = {x1: line.x1, y1: line.y1, x2: line.x2, y2: line.y2};
+	
+	if (l.x2 < l.x1){
+		var x1 = l.x1;
+		var y1 = l.y1; 
+		l = {x1: l.x2, y1: l.y2, x2: x1, y2: y1}; 
+	}
+	
+	var yy = l.y2 - l.y1;
+	var xx = l.x2 - l.x1;
+	var m = yy / xx;
+	
+	var cx1, cx2, cy1, cy2;
+	cx1 = box.x - l.x1;
+	cx2 = cx1 + box.w;
+	
+	if (cx1 < 0) cx1 = 0;
+	if (cx2 < 0) cx2 = 0;
+	if (cx1 > xx) cx1 = xx;
+	if (cx2 > xx) cx2 = xx;
+	
+	cy1 = m * cx1 + l.y1;
+	cy2 = m * cx2 + l.y1;
+	cx1 += l.x1;
+	cx2 += l.x1;
+	
+	if (cx2 < box.x) return false;
+	if (cx2 > box.x + box.w) return false;
+	
+	if (m < 0){
+		if (cy2 > box.y + box.h) return false;
+		if (cy1 < box.y) return false;
+	}else if (m > 0){
+		if (cy1 > box.y + box.h) return false;
+		if (cy2 < box.y) return false;
+	}
+	
+	return true;
 };
 
 Underworld.prototype.printGreet = function(){

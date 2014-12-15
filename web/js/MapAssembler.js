@@ -221,7 +221,11 @@ MapAssembler.prototype.parseObjects = function(mapData){
 				this.mapManager.player = new Player(vec3(x, y, z), vec3(0.0, o.dir * Math.PI_2, 0.0), this.mapManager);
 			break;
 			case "door":
-				this.mapManager.doors.push(new Door(this.mapManager, vec3(x - 0.5, y, z - 0.5), o.dir, "door1"));
+				var xx = (x << 0) - ((o.dir == "H")? 1 : 0);
+				var zz = (z << 0) - ((o.dir == "V")? 1 : 0);
+				var tile = mapData.map[zz][xx].w;
+				
+				this.mapManager.doors.push(new Door(this.mapManager, vec3(x - 0.5, y, z - 0.5), o.dir, "door1", tile));
 			break;
 		}
 	}
