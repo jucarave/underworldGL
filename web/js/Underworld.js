@@ -289,6 +289,11 @@ Underworld.prototype.loop = function(){
 		window.trianglesCount = 0;
 		game.lastT = now - (dT % game.fps);
 		
+		if (!game.GL.active){
+			requestAnimFrame(function(){ game.loop(); }); 
+			return;
+		}
+		
 		if (this.map != null){
 			var gl = game.GL.ctx;
 			

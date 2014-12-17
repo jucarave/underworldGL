@@ -6,6 +6,12 @@ function WebGL(size, position, container){
 	
 	this.images = [];
 	this.audio = [];
+	
+	this.active = true;
+	
+	var gl = this;
+	addEvent(window, "blur", function(e){ gl.active = false; });
+	addEvent(window, "focus", function(e){ gl.active = true; });
 }
 
 WebGL.prototype.initCanvas = function(size, position, container){
