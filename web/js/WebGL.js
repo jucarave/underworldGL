@@ -10,8 +10,8 @@ function WebGL(size, position, container){
 	this.active = true;
 	
 	var gl = this;
-	addEvent(window, "blur", function(e){ gl.active = false; });
-	addEvent(window, "focus", function(e){ gl.active = true; });
+	addEvent(window, "blur", function(e){ gl.active = false; gl.pauseMusic(); });
+	addEvent(window, "focus", function(e){ gl.active = true; gl.restoreMusic(); });
 }
 
 WebGL.prototype.initCanvas = function(size, position, container){
@@ -221,7 +221,7 @@ WebGL.prototype.loadAudio = function(url, isMusic){
 	var eng = this;
 	if (!eng.audioCtx) return null;
 	
-	var audio = {buffer: null, source: null, ready: false, isMusic: isMusic};
+	var audio = {buffer: null, source: null, ready: false, isMusic: isMusic, startedAt: 0, pausedAt: 0};
 	
 	var http = getHttp();
 	http.open('GET', url, true);
@@ -254,10 +254,41 @@ WebGL.prototype.playSound = function(soundFile, loop, tryIfNotReady){
 	var source = eng.audioCtx.createBufferSource();
 	source.buffer = soundFile.buffer;
 	source.connect(eng.audioCtx.destination);
-	source.start(0);
+	if (soundFile.pausedAt != 0){
+		soundFile.startedAt = Date.now() - soundFile.pausedAt;
+		source.start(0, soundFile.pausedAt / 1000);
+		soundFile.pausedAt = 0;
+	}else{
+		soundFile.startedAt = Date.now();
+		source.start(0);
+	}
 	source.loop = loop;
 	source.looping = loop;
 	
 	if (soundFile.isMusic)
 		soundFile.source = source;
+};
+
+WebGL.prototype.pauseMusic = function(){
+	for (var i=0,len=this.audio.length;i<len;i++){
+		var audio = this.audio[i];
+		
+		audio.pausedAt = 0;
+		if (audio.isMusic && audio.source){
+			audio.source.stop();
+			audio.pausedAt = (Date.now() - audio.startedAt);
+			audio.restoreLoop = audio.source.loop;
+		}
+	}
+};
+
+WebGL.prototype.restoreMusic = function(){
+	for (var i=0,len=this.audio.length;i<len;i++){
+		var audio = this.audio[i];
+		
+		if (audio.isMusic && audio.source && audio.pausedAt != 0){
+			audio.source = null;
+			this.playSound(audio, audio.restoreLoop, true);
+		}
+	}
 };
