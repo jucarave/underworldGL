@@ -665,5 +665,153 @@ var ObjectFactory = {
 		};
 		
 		return obj;
+	},
+	
+	create3DObject: function(gl, baseObject){
+		// Creates the buffer data for the vertices
+		var vertexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(baseObject.vertices), gl.STATIC_DRAW);
+		vertexBuffer.numItems = baseObject.vertices.length;
+		vertexBuffer.itemSize = 3;
+		
+		// Creates the buffer data for the texture coordinates
+		var texBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, texBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(baseObject.texCoords), gl.STATIC_DRAW);
+		texBuffer.numItems = baseObject.texCoords.length;
+		texBuffer.itemSize = 2;
+		
+		// Creates the buffer data for the indices
+		var indicesBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(baseObject.indices), gl.STATIC_DRAW);
+		indicesBuffer.numItems = baseObject.indices.length;
+		indicesBuffer.itemSize = 1;
+		
+		var darkBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, darkBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER,new Uint8Array(baseObject.darkVertex), gl.STATIC_DRAW);
+		darkBuffer.numItems = baseObject.darkVertex.length;
+		darkBuffer.itemSize = 1;
+		
+		var buffer = this.getObjectWithProperties(vertexBuffer, indicesBuffer, texBuffer, darkBuffer);
+		
+		return buffer;
+	},
+	
+	translateObject: function(object, translation){
+		for (var i=0,len=object.vertices.length;i<len;i+=3){
+			object.vertices[i] += translation.a;
+			object.vertices[i+1] += translation.b;
+			object.vertices[i+2] += translation.c;
+		}
+		
+		return object;
+	},
+	
+	fuzeObjects: function(objectList){
+		var vertices = [];
+		var texCoords = [];
+		var indices = [];
+		var darkVertex = [];
+		
+		var indexCount = 0;
+		for (var i=0,len=objectList.length;i<len;i++){
+			var obj = objectList[i];
+			
+			for (var j=0,jlen=obj.vertices.length;j<jlen;j++){
+				vertices.push(obj.vertices[j]);
+			}
+			
+			for (var j=0,jlen=obj.texCoords.length;j<jlen;j++){
+				texCoords.push(obj.texCoords[j]);
+			}
+			
+			for (var j=0,jlen=obj.indices.length;j<jlen;j++){
+				indices.push(obj.indices[j] + indexCount);
+			}
+			
+			for (var j=0,jlen=obj.darkVertex.length;j<jlen;j++){
+				darkVertex.push(obj.darkVertex[j]);
+			}
+			
+			indexCount += obj.vertices.length / 3;
+		}
+		
+		return {vertices: vertices, indices: indices, texCoords: texCoords, darkVertex: darkVertex};
+	},
+	
+	load3DModel: function(modelFile, gl){
+		var model = {ready: false};
+		
+		var http = getHttp();
+		http.open("GET", cp + "models/" + modelFile + ".obj?version=" + version, true);
+		http.onreadystatechange = function(){
+			if (http.readyState == 4 && http.status == 200) {
+				var lines = http.responseText.split("\n");
+				
+				var vertices = [], texCoords = [], triangles = [], vertexIndex = [], texIndices = [], indices = [], darkVertex = [];
+				var working;
+				var t = false;
+				for (var i=0,len=lines.length;i<len;i++){
+					var l = lines[i].trim();
+					if (l == ""){ continue; }else
+					if (l == "# vertices"){ working = vertices; t = false; }else
+					if (l == "# texCoords"){ working = texCoords; t = true; }else
+					if (l == "# triangles"){ working = triangles; t = false; }
+					else{
+						var params = l.split(" ");
+						for (var j=0,jlen=params.length;j<jlen;j++){
+							if (!isNaN(params[j])){
+								params[j] = parseFloat(params[j]);
+							}
+							
+							if (!t) working.push(params[j]);
+						}
+						if (t) working.push(params);
+					}
+				}
+				
+				var usedVer = [];
+				var usedInd = [];
+				for (var i=0,len=triangles.length;i<len;i++){
+					if (usedVer.indexOf(triangles[i]) != -1){
+						indices.push(usedInd[usedVer.indexOf(triangles[i])]);
+					}else{
+						usedVer.push(triangles[i]);
+						var t = triangles[i].split("/");
+					
+						t[0] = parseInt(t[0]) - 1;
+						t[1] = parseInt(t[1]) - 1;
+						
+						indices.push(vertexIndex.length / 3);
+						usedInd.push(vertexIndex.length / 3);
+						
+						vertexIndex.push(vertices[t[0] * 3], vertices[t[0] * 3 + 1], vertices[t[0] * 3 + 2]);
+						
+						texIndices.push(texCoords[t[1]][0], texCoords[t[1]][1]);
+					}
+				}
+				
+				for (var i=0,len=texIndices.length/2;i<len;i++){
+					darkVertex.push(0);
+				}
+				
+				var base = {vertices: vertexIndex, indices: indices, texCoords: texIndices, darkVertex: darkVertex};
+				var model3D = ObjectFactory.create3DObject(gl, base);
+
+				model.rotation = model3D.rotation;
+				model.position = model3D.position;
+				model.vertexBuffer = model3D.vertexBuffer;
+				model.indicesBuffer = model3D.indicesBuffer;
+				model.texBuffer = model3D.texBuffer;
+				model.darkBuffer = model3D.darkBuffer;
+				model.ready = true;
+			}
+		};
+		http.send();
+		
+		return model;
 	}
 };

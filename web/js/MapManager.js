@@ -20,7 +20,7 @@ function MapManager(game, map){
 MapManager.prototype.loadMap = function(mapName){
 	var mapM = this;
 	var http = getHttp();
-	http.open('GET', 'maps/' + mapName + ".json", true);
+	http.open('GET', cp + 'maps/' + mapName + ".json", true);
 	http.onreadystatechange = function() {
   		if (http.readyState == 4 && http.status == 200) {
   			try{
@@ -98,14 +98,29 @@ MapManager.prototype.getInstanceAt = function(position){
 	return null;
 };
 
-MapManager.prototype.getInstanceNormal = function(pos, spd){
+MapManager.prototype.getInstanceAtGrid = function(position){
+	for (var i=0,len=this.instances.length;i<len;i++){
+		if (this.instances[i].position.a == position.a && this.instances[i].position.c == position.c){
+			return (this.instances[i]);
+		}
+	}
+	
+	return null;
+};
+
+MapManager.prototype.getInstanceNormal = function(pos, spd, h){
 	var p = pos.clone();
 	p.a = ((p.a + spd.a) << 0);
-	p.b = (p.b);
+	p.b = (p.b << 0);
 	p.c = ((p.c + spd.b) << 0);
 	
-	var ins = this.getInstanceAt(p);
+	var ins = this.getInstanceAtGrid(p);
 	if (!ins) return null;
+	
+	if (ins.height){
+		if (pos.b + h < ins.position.b) return null;
+		if (pos.b >= ins.position.b + ins.height) return null;
+	}
 	
 	if (pos.a > ins.position.a + 1) return ObjectFactory.normals.right; else
 	if (pos.a < ins.position.a) return ObjectFactory.normals.left; else
@@ -210,6 +225,11 @@ MapManager.prototype.getWallNormal = function(pos, spd, h, inWater){
 };
 
 MapManager.prototype.getYFloor = function(x, y){
+	var ins = this.getInstanceAtGrid(vec3(x<<0,0,y<<0));
+	if (ins != null && ins.height){
+		return ins.position.b + ins.height;
+	}
+	
 	var xx = x - (x << 0);
 	var yy = y - (y << 0);
 	x = x << 0;
@@ -247,10 +267,11 @@ MapManager.prototype.drawMap = function(){
 		if (x < mtd.boundaries[0] || x > mtd.boundaries[2] || y < mtd.boundaries[1] || y > mtd.boundaries[3])
 			continue;
 		
+		DEBUG.sectorsCount++;
 		if (mtd.type == "B"){ // Blocks
 			this.game.drawBlock(mtd, mtd.texInd);
 		}else if (mtd.type == "A"){ // Angled Walls
-			this.game.drawAngledWall(mtd, mtd.texInd);
+			this.game.drawBlock(mtd, mtd.texInd);
 		}else if (mtd.type == "F"){ // Floors
 			var tt = mtd.texInd;
 			if (this.isWaterTile(tt)){ 
@@ -459,6 +480,7 @@ MapManager.prototype.loop = function(){
 			continue;
 		}
 		
+		DEBUG.instancesCount++;
 		ins.loop();
 	}
 	
@@ -476,6 +498,7 @@ MapManager.prototype.loop = function(){
 			continue;
 		}
 		
+		DEBUG.instancesCount++;
 		ins.loop();
 		this.game.drawDoor(ins.position.a, ins.position.b, ins.position.c, ins.rotation, ins.textureCode);
 		this.game.drawDoorWall(ins.doorPosition.a, ins.doorPosition.b, ins.doorPosition.c, ins.wallTexture, (ins.dir == "V"));

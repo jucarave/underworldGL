@@ -6,7 +6,6 @@
 					  2014
 ===================================================*/
 
-var trianglesCount = 0;
 function Underworld(){
 	this.size = vec2(320, 200);
 	this.glpos = vec2(75, 36);
@@ -18,9 +17,6 @@ function Underworld(){
 	this.console = new Console(10, 15, 13, this);
 	this.font = '10px "Courier"';
 	
-	this.create3DObjects();
-	AnimatedTexture.init(this.GL.ctx);
-	
 	this.scene = null;
 	this.map = null;
 	this.keys = [];
@@ -29,6 +25,7 @@ function Underworld(){
 	this.music = {};
 	this.textures = {wall: [], floor: [], ceil: []};
 	this.objectTex = {};
+	this.models = {};
 	
 	this.fps = (1000 / 30) << 0;
 	this.lastT = 0;
@@ -38,6 +35,9 @@ function Underworld(){
 	this.loadImages();
 	this.loadMusic();
 	this.loadTextures();
+	
+	this.create3DObjects();
+	AnimatedTexture.init(this.GL.ctx);
 }
 
 Underworld.prototype.create3DObjects = function(){
@@ -48,6 +48,8 @@ Underworld.prototype.create3DObjects = function(){
 	this.billboard = ObjectFactory.billboard(vec3(1.0,1.0,0.0), vec2(1.0,1.0), this.GL.ctx);
 	
 	this.slope = ObjectFactory.slope(vec3(1.0,1.0,1.0), vec2(1.0, 1.0), this.GL.ctx);
+	
+	this.models.ankh = ObjectFactory.load3DModel("ankh", this.GL.ctx);
 };
 
 Underworld.prototype.loadMusic = function(){
@@ -90,6 +92,11 @@ Underworld.prototype.loadTextures = function(){
 	
 	// Enemies
 	this.objectTex.gargoyle_run = this.GL.loadImage(cp + "img/gargoyleRun.png?version=" + version, true);
+	
+	// 3D Objects
+	this.objectTex.ankh = this.GL.loadImage(cp + "img/ankh.png?version=" + version, true);
+	
+	DEBUG.setTextures(this.textures);
 };
 
 Underworld.prototype.stopMusic = function(){
@@ -199,20 +206,16 @@ Underworld.prototype.loadGame = function(){
 	}
 };
 
-Underworld.prototype.drawBlock = function(blockObject, texId){
-	var game = this;
-	var camera = game.map.player;
+Underworld.prototype.drawObject = function(object, texture){
+	var camera = this.map.player;
 	
-	var cube = blockObject;
-	game.GL.drawObject(cube, camera, game.getTextureById(texId, "wall").texture);
+	this.GL.drawObject(object, camera, texture);
 };
 
-Underworld.prototype.drawAngledWall = function(wallObject, texId){
-	var game = this;
-	var camera = game.map.player;
+Underworld.prototype.drawBlock = function(blockObject, texId){
+	var camera = this.map.player;
 	
-	var aWall = wallObject;
-	game.GL.drawObject(aWall, camera, game.getTextureById(texId, "wall").texture);
+	this.GL.drawObject(blockObject, camera, this.getTextureById(texId, "wall").texture);
 };
 
 Underworld.prototype.drawDoorWall = function(x, y, z, texId, vertical){
@@ -246,9 +249,8 @@ Underworld.prototype.drawFloor = function(floorObject, texId, typeOf){
 	var game = this;
 	var camera = game.map.player;
 	
-	var floor = floorObject;
 	var ft = typeOf;
-	game.GL.drawObject(floor, camera, game.getTextureById(texId, ft).texture);
+	game.GL.drawObject(floorObject, camera, game.getTextureById(texId, ft).texture);
 };
 
 Underworld.prototype.drawBillboard = function(position, texId, billboard){
@@ -264,18 +266,7 @@ Underworld.prototype.drawSlope = function(slopeObject, texId){
 	var game = this;
 	var camera = game.map.player;
 	
-	var slope = slopeObject;
-	game.GL.drawObject(slope, camera, game.getTextureById(texId, "floor").texture);
-};
-
-Underworld.prototype.drawFPS = function(/*float*/ now){
-	var fps = Math.floor((++this.numberFrames) / ((now - this.firstFrame) / 1000));
-	var ctx = this.UI.ctx;
-	ctx.font = '10px "Courier"';
-	ctx.fillStyle = "white";
-	ctx.fillText("FPS: " + fps + "/30", 16, 16);
-	
-	ctx.fillText("TriCount: " + window.trianglesCount, 16, 24);
+	game.GL.drawObject(slopeObject, camera, game.getTextureById(texId, "floor").texture);
 };
 
 Underworld.prototype.loop = function(){
@@ -286,7 +277,7 @@ Underworld.prototype.loop = function(){
 	
 	// Limit the game to the base speed of the game
 	if (dT > game.fps){
-		window.trianglesCount = 0;
+		game.resetDebugParameters();
 		game.lastT = now - (dT % game.fps);
 		
 		if (!game.GL.active){
@@ -304,13 +295,13 @@ Underworld.prototype.loop = function(){
 			
 			game.UI.ctx.drawImage(game.images.viewport,0,0);
 			game.console.render(242, 11);
+			
+			game.debugLoop(now);
 		}
 		
 		if (this.scene != null){
 			game.scene.loop();
 		}
-		
-		game.drawFPS(now);
 	}
 	
 	requestAnimFrame(function(){ game.loop(); });
@@ -341,12 +332,23 @@ addEvent(window, "load", function(){
 	addEvent(document, "keydown", function(e){
 		if (window.event) e = window.event;
 		
+		DEBUG.keyDown(e.keyCode);
+		if (e.keyCode == 8){
+			e.preventDefault();
+			e.cancelBubble = true;
+		}
+		
 		if (game.keys[e.keyCode] == 2) return;
 		game.keys[e.keyCode] = 1;
 	});
 	
 	addEvent(document, "keyup", function(e){
 		if (window.event) e = window.event;
+		
+		if (e.keyCode == 8){
+			e.preventDefault();
+			e.cancelBubble = true;
+		}
 		
 		game.keys[e.keyCode] = 0;
 	});

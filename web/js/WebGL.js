@@ -141,6 +141,7 @@ WebGL.prototype.loadImage = function(src, makeItTexture, textureIndex, isSolid, 
 		img.ready = true;
 		if (makeItTexture){
 			img.texture = gl.parseTexture(img);
+			img.texture.textureIndex = img.textureIndex;
 		}
 	});
 	
@@ -174,7 +175,7 @@ WebGL.prototype.parseTexture = function(img){
 WebGL.prototype.drawObject = function(object, camera, texture){
 	var gl = this.ctx;
 	
-	window.trianglesCount += object.indicesBuffer.numItems / 3;
+	window.DEBUG.trianglesCount += object.indicesBuffer.numItems / 3;
 
 	// Pass the vertices data to the shader
 	gl.bindBuffer(gl.ARRAY_BUFFER, object.vertexBuffer);
@@ -244,6 +245,7 @@ WebGL.prototype.loadAudio = function(url, isMusic){
 };
 
 WebGL.prototype.playSound = function(soundFile, loop, tryIfNotReady){
+	return;
 	var eng = this;
 	if (!soundFile || !soundFile.ready){
 		if (tryIfNotReady){ soundFile.timeO = setTimeout(function(){ eng.playSound(soundFile, loop, tryIfNotReady); }, 300); } 
@@ -256,7 +258,7 @@ WebGL.prototype.playSound = function(soundFile, loop, tryIfNotReady){
 	source.connect(eng.audioCtx.destination);
 	if (soundFile.pausedAt != 0){
 		soundFile.startedAt = Date.now() - soundFile.pausedAt;
-		source.start(0, soundFile.pausedAt / 1000);
+		source.start(0, (soundFile.pausedAt / 1000) % source.buffer.duration);
 		soundFile.pausedAt = 0;
 	}else{
 		soundFile.startedAt = Date.now();

@@ -15,6 +15,17 @@ function Player(position, direction, mapManager){
 	this.jog = vec4(0.0, 1, 0.0, 1);
 	this.onWater = false;
 	this.moved = false;
+	
+	if (DEBUG){
+		DEBUG.player = this;
+		var spawn = localStorage.getItem("SPAWNTEMP");
+		if (spawn != null){
+			var p = spawn.split(",");
+			this.position.set(parseFloat(p[0]),parseFloat(p[1]),parseFloat(p[2]));
+			this.rotation.b = Math.degToRad(parseFloat(p[3]));
+			this.targetY = this.position.b;
+		}
+	}
 }
 
 Player.prototype.jogMovement = function(){
@@ -30,28 +41,35 @@ Player.prototype.jogMovement = function(){
 };
 
 Player.prototype.moveTo = function(xTo, zTo){
+	if (DEBUG.fly){
+		xTo *= 1.5;
+		zTo *= 1.5;
+	}
+	
 	var moved = false;
 	
 	if (this.onWater){ xTo /= 2; zTo /=2; }
 	var movement = vec2(xTo, zTo);
 	var spd = vec2(xTo * 1.5, 0);
 	var fakePos = this.position.clone();
-	
-	for (var i=0;i<2;i++){
-		var normal = this.mapManager.getWallNormal(fakePos, spd, this.cameraHeight, this.onWater);
-		if (!normal){ normal = this.mapManager.getDoorNormal(fakePos, spd, this.cameraHeight, this.onWater); }
-		if (!normal){ normal = this.mapManager.getInstanceNormal(fakePos, spd); } 
 		
-		if (normal){
-			normal = normal.clone();
-			var dist = movement.dot(normal);
-			normal.multiply(-dist);
-			movement.sum(normal);
+	if (!DEBUG.clip){
+		for (var i=0;i<2;i++){
+			var normal = this.mapManager.getWallNormal(fakePos, spd, this.cameraHeight, this.onWater);
+			if (!normal){ normal = this.mapManager.getDoorNormal(fakePos, spd, this.cameraHeight, this.onWater); }
+			if (!normal){ normal = this.mapManager.getInstanceNormal(fakePos, spd, this.cameraHeight); } 
+			
+			if (normal){
+				normal = normal.clone();
+				var dist = movement.dot(normal);
+				normal.multiply(-dist);
+				movement.sum(normal);
+			}
+			
+			fakePos.a += movement.a;
+			
+			spd = vec2(0, zTo * 1.5);
 		}
-		
-		fakePos.a += movement.a;
-		
-		spd = vec2(0, zTo * 1.5);
 	}
 	
 	if (movement.a != 0 || movement.b != 0){
@@ -109,7 +127,7 @@ Player.prototype.checkAction = function(){
 		if (door){ 
 			door.activate();
 		}else{
-			var object = this.mapManager.getInstanceAt(vec3(xx, this.position.b, zz));
+			var object = this.mapManager.getInstanceAtGrid(vec3(xx, this.position.b, zz));
 			if (object && object.activate)
 				object.activate();
 		}
@@ -117,6 +135,8 @@ Player.prototype.checkAction = function(){
 };
 
 Player.prototype.doVerticalChecks = function(){
+	if (DEBUG.fly) return;
+	
 	var pointY = this.mapManager.getYFloor(this.position.a, this.position.c);
 	var wy = (this.onWater)? 0.3 : 0;
 	var py = Math.floor((pointY - (this.position.b + wy)) * 100) / 100;
@@ -158,9 +178,23 @@ Player.prototype.step = function(){
 		this.jog.a = 0.0;
 		if (this.position.b >= this.targetY) this.position.b = this.targetY;
 	}
+	
+	// FLY
+	if (DEBUG.fly){
+		var game = this.mapManager.game;
+		if (game.keys[38] == 1){
+			this.position.b += 0.1;
+		}else if (game.keys[40] == 1){
+			this.position.b -= 0.1;
+		}
+		
+		this.targetY = this.position.b;
+	}
 };
 
 Player.prototype.loop = function(){
+	if (DEBUG.onDebug) return;
+	
 	this.moved = false;
 	this.step();
 };

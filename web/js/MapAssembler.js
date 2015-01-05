@@ -219,6 +219,13 @@ MapAssembler.prototype.parseObjects = function(mapData){
 		switch (o.type){
 			case "player":
 				this.mapManager.player = new Player(vec3(x, y, z), vec3(0.0, o.dir * Math.PI_2, 0.0), this.mapManager);
+				
+				var model = this.mapManager.game.models.ankh;
+				var texture = this.mapManager.game.objectTex.ankh.texture;
+				var ankh = new Object3D(vec3(56,0,34), model, texture, this.mapManager);
+				ankh.rotation.b = Math.PI_2;
+				
+				this.mapManager.instances.push(ankh);
 			break;
 			case "door":
 				var xx = (x << 0) - ((o.dir == "H")? 1 : 0);
